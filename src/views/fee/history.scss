@@ -1,0 +1,248 @@
+.el-timeline-item{
+  padding-bottom: 0px !important;
+}
+.wxpay{
+
+  .msgholder{
+    text-align: center;
+    width: 80%;
+    .moneyholder{ 
+      .money{
+        font-size:24px;
+        color:#ff8000; 
+      }  
+    }
+    .wxtxt{
+      border-radius: 10px;
+      background-color: #e6e6e6;
+      width: 150px;
+      margin: auto;
+      color: #ff8000;
+      font-weight: bold;
+    } 
+  }
+  
+  .imgholder{
+    background-color: #2CA339;
+    height:320px;
+    text-align: center;
+    .erweima{
+      width: 250px;
+      height: 250px;
+      margin-top: 35px;
+      border-radius: 20px;
+    }
+  }
+  .bottom{
+    display: flex;
+    padding-top: 15px;
+    .logo{
+      width:  60px;
+      height: 60px;
+      border-radius:  5px;
+    }
+  }
+}
+.loading{
+  color:white
+}
+.authcode{
+  width:1px;
+  height: 1px;
+}
+.payholder {
+  text-align: center;
+  color:#707070;
+  .title{
+    font-size: 30px;
+    margin-bottom: 30px;
+  }
+  .money{
+    font-size: 30px;
+    color:#FF8000;
+    .moneyunit{
+      font-size:14px;
+      color:#707070;
+    }
+  }
+ 
+  table.pay-table {
+    width: 100%;
+    margin-top: 40px;
+    text-align: center;
+    .td-pay-text{
+      padding-top: 40px ;
+      padding-bottom: 40px ;
+    }
+  }
+}
+ .newdate{
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
+  .newdate-tr{
+    cursor: pointer;
+    line-height: 30px;
+    color: #707070;
+    border-bottom: 1px solid #bfbfbf;
+  }
+}
+.feeholder
+{
+  border-bottom: 1px solid #cdcdcd;
+  padding-bottom: 15px;
+  margin: 20px auto;
+ 
+  .changedate{
+    cursor: pointer;
+    border-bottom: 2px solid #FF8000;
+  }
+  .table{
+    width:100%;
+    .money{
+      font-size: 14px;
+      color: #FF8000;
+    }
+  }
+  .feetitle{
+    border-bottom: 2px solid #FF8000;
+    
+    font-size: 20px;
+    width: 100%;
+    .date{
+      color:#8a8a8a;
+      font-size: 14px;
+    }
+  }
+  .moneyholder{ 
+    text-align: center;
+    padding: 60px auto;
+    .payoff{
+      color:#1afa29;
+      font-size: 26px; 
+      margin-top: 50px;
+    }
+    .money{
+      font-size: 24px;
+      color: #FF8000;
+      line-height: 70px; 
+    }
+  }
+}
+.topcard{
+  border-bottom:1px solid #dbdbdb;
+  .settings{
+    position: absolute;
+    top:6px;
+    right:6px;
+    cursor: pointer;
+  }
+}
+.row-item {
+  display: flex;
+}
+.roomname{
+  font-size: 20px;
+  font-weight: 700;
+  
+}
+.roomnamered{
+   color:#FF8000;
+}
+.roomnamegreen{
+  color:#1afa29;
+}
+.name {
+  min-width: 90px;
+}
+.el-card__body {
+  height: 660px;
+}
+
+.whenprint {
+  display: none;
+}
+.dialog-upload .el-dialog {
+  width: 450px;
+}
+.upload-demo {
+  text-align: center;
+}
+@media print {
+  .sidebar-container,/*左侧菜单*/ 
+   .navbar,/*顶部面包屑菜单*/ 
+   .tags-view-container /*顶部面包屑下面的菜单*/ {
+    display: none !important;
+  }
+  .product-detail {
+    /* 本页内容 */
+  }
+  .recordprint {
+    display: none;
+  }
+
+  .noprint {
+    display: none;
+  }
+
+  /* 打印内容样式 */
+  .whenprint {
+    display: block;
+  }
+  .print-title {
+    font-weight: 700;
+    font-size: 26px;
+    width: 100%;
+    text-align: center;
+  }
+  .print-date {
+    margin: 5px 0;
+    border-bottom: 1px solid #dcdfe6;
+  }
+  .print-item-holder {
+    width: 100%; 
+    min-height: 140px;
+  } 
+  .main-container {
+    margin-left: 0px !important;
+    width: 100% !important;
+  }
+  .print-header {
+    margin-bottom: 20px;
+  }
+  .el-card {
+    border: none;
+  }
+  
+  .main-container {
+    margin-left: 0px !important;
+    width: 100% !important;
+  }
+  .print-header {
+    margin-bottom: 20px;
+  }
+  .footer {
+    text-align: right;
+    margin: 30px 0;
+  }
+  .carditem{
+    border-bottom: 1px dashed #8a8a8a ;
+    margin: 40px 120px ;  
+  }
+  .organizename {
+    font-size: 19px;
+    font-weight: 700;
+  }
+  .el-tooltip__popper{
+    display: none;
+  }
+  .print-room, .print-name
+  {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .print-item-holder{
+    font-size: 18px;
+    border-bottom: 1px dashed #8a8a8a;
+  }
+} 

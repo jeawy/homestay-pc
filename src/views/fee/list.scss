@@ -1,0 +1,131 @@
+#fee-list {
+  .tips{
+    margin-top:15px;
+  }
+  .message{
+    color:#ff8000;
+  }
+  .detail{
+    color:#67C23A;
+    margin: 15px 0;
+  }
+  span.el-tree__empty-text{
+    width:100% !important;
+  }
+    .el-avatar {
+      margin-right: 16px;
+    }
+    .detail-form {
+      display: flex;
+      align-items: center;
+      .el-form-item {
+        margin-bottom: 0;
+        margin-right: 24px;
+        label {
+          font-weight: 600;
+        }
+      }
+    }
+    .name-wrap {
+      display: flex;
+      align-items: center;
+    }
+    .el-container {
+      height: 100%;
+    }
+    .search{
+      display: flex;
+    }
+    .building-aside{
+        width: 180px !important;
+        border-right: 1px solid #ddd;
+        padding: 0 5px;
+        min-height: 600px;
+        margin-right: 20px;
+    }
+  }
+
+
+ 
+.whenprint {
+  display: none;
+}
+.dialog-upload .el-dialog {
+  width: 450px;
+}
+.upload-demo {
+  text-align: center;
+}
+ 
+ 
+@media print {
+   
+   .sidebar-container,/*左侧菜单*/ 
+   .navbar,/*顶部面包屑菜单*/ 
+    .tags-view-container /*顶部面包屑下面的菜单*/ {
+    display: none !important;
+  }
+ 
+  .recordprint {
+    display: none;
+  }
+
+  .noprint {
+    display: none;
+  }
+
+  /* 打印内容样式 */
+  .whenprint {
+    display: block;
+    margin:40px 320px;
+  }
+  .print-title {
+    font-weight: 700;
+    font-size: 26px;
+    width: 100%;
+    text-align: center;
+  }
+  .print-date {
+    margin: 5px 0; 
+  }
+ 
+  .print-item-holder {
+    width: 100%;
+    margin:20px;
+    min-height: 120px;
+  }
+  .whenprint {
+    margin: 20px;
+    width: 95% !important;
+  }
+  .main-container {
+    margin-left: 0px !important;
+    width: 100% !important;
+  }
+  .print-header {
+    margin-bottom: 20px;
+  }
+  .footer {
+    text-align: right;
+    margin: 30px 0;
+  }
+  .carditem{
+    border-bottom: 1px dashed #8a8a8a ;
+    margin: 20px 80px;
+  }
+  .organizename {
+    font-size: 19px;
+    font-weight: 700;
+  }
+  .el-tooltip__popper{
+    display: none;
+  }
+  .print-room, .print-name
+  {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .print-item-holder{
+    font-size: 18px;
+  }
+} 
