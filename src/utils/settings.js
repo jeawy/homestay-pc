@@ -1,5 +1,5 @@
 module.exports = {
-  title: '茶玖茗扬数据管理平台',
+  title: '民宿数据管理平台',
 
   /**
    * @type {boolean} true | false

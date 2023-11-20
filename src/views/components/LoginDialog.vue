@@ -10,7 +10,7 @@
         :src="require('@/assets/img/logo.png')"
         fit="cover"
       ></el-image>
-      茶玖茗扬数据管理平台
+      民宿数据管理平台
     </div>
     <el-form
       ref="signinForm"
