@@ -31,7 +31,7 @@ export default [
       import('@/views/login/signup'),
   },
   {
-    path: '/gift',
+    path: '/product',
     component: Layout,
     redirect: 'noRedirect',
     meta: {
@@ -40,20 +40,20 @@ export default [
     },
     hidden: true,
     children: [{
-      path: 'gift-detail/:uuid',
-      name: 'gift-detail',
+      path: 'product-detail/:uuid',
+      name: 'product-detail',
       component: () =>
-        import('@/views/gift-manage/gift-detail'),
+        import('@/views/product-manage/product-detail'),
       meta: {
         title: '商品详情',
         icon: 'tree',
       }
     },
     {
-      path: 'edit-product/:id',
+      path: 'edit-content/:id',
       name: 'alter-gifts',
       component: () =>
-        import('@/views/product/edit-product/'),
+        import('@/views/content/edit-content/'),
       meta: {
         title: '商品修改',
         icon: 'tree',

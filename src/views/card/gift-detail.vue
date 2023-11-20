@@ -96,7 +96,7 @@
             <template slot-scope="scope">
               <el-tooltip effect="dark" content="修改" placement="top">
                 <el-button
-                  @click="editGiftSpecs(scope.row)"
+                  @click="editProductSpecs(scope.row)"
                   icon="el-icon-edit"
                   type="text"
                   style="color:blue"
@@ -109,7 +109,7 @@
                   type="text"
                   icon="el-icon-check"
                   style="color:green"
-                  @click="saveGiftSpecs(scope.$index,scope.row)"
+                  @click="saveProductSpecs(scope.$index,scope.row)"
                 />
               </el-tooltip>
             </template>
@@ -155,13 +155,13 @@
 
 <script>
 import {
-  viewGifts,
-  viewGiftsSpecs,
-  addGiftSpecs,
-  alterGiftSpecs
-} from "@/api/gift";
+  viewProducts,
+  viewProductsSpecs,
+  addProductSpecs,
+  alterProductSpecs
+} from "@/api/product";
 export default {
-  name: "gift-detail",
+  name: "product-detail",
 
   data() {
     return {
@@ -203,16 +203,16 @@ export default {
         this.dialogShow1 = true;
       }
     },
-    getviewGifts() {
+    getviewProducts() {
       var id = this.id;
-      viewGifts({ product_id: id }).then(({ data }) => {
+      viewProducts({ product_id: id }).then(({ data }) => {
         this.giftList = data.msg[0];
       });
     },
     //查看商品规格
-    getGiftsSpecs() {
+    getProductsSpecs() {
       var id = this.id;
-      viewGiftsSpecs({ product_id: id }).then(({ data }) => {
+      viewProductsSpecs({ product_id: id }).then(({ data }) => {
         this.giftSpeList = data.msg;
       });
     },
@@ -231,16 +231,16 @@ export default {
       if (specs.content == null) {
         delete specs.content;
       }
-      addGiftSpecs(specs).then(({ data }) => {
+      addProductSpecs(specs).then(({ data }) => {
         if (data.status === 0) {
           this.$message.success(data.msg);
           this.addSpecsForm = {};
-          this.getGiftsSpecs();
+          this.getProductsSpecs();
           this.dialogShow1 = false;
         } else {
           this.$message.error(data.msg);
           this.addSpecsForm = {};
-          this.getGiftsSpecs();
+          this.getProductsSpecs();
         }
       });
     },
@@ -252,7 +252,7 @@ export default {
       this.iconShow = true;
     },
     //修改商品规格
-    editGiftSpecs(row) {
+    editProductSpecs(row) {
       if (this.iconShow === true) {
         this.$confirm("当前修改未保存", "注意", {
           type: "warning"
@@ -263,7 +263,7 @@ export default {
       }
     },
     //确认修改商品规格
-    saveGiftSpecs(index, row) {
+    saveProductSpecs(index, row) {
       this.iconShow = false;
 
       let specs = {
@@ -275,10 +275,10 @@ export default {
         coin: row.coin,
         content: row.content
       };
-      alterGiftSpecs(specs).then(({ data }) => {
+      alterProductSpecs(specs).then(({ data }) => {
         if (data.status === 0) {
           this.$message.success(data.msg);
-          this.getGiftsSpecs();
+          this.getProductsSpecs();
           this.editing = false;
         } else {
           this.$message.error(data.msg);
@@ -288,8 +288,8 @@ export default {
   },
 
   created() {
-    this.getGiftsSpecs();
-    this.getviewGifts();
+    this.getProductsSpecs();
+    this.getviewProducts();
   }
 };
 </script>

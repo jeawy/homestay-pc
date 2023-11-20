@@ -1,8 +1,8 @@
 <script>
 import noticeDetail from "@/components/Notice/components/notice-detail";
 import { getActivityList } from "@/api/activity";
-import { queryProductList } from "@/api/product"; 
-import { viewGifts } from "@/api/gift";   
+import { queryProductList } from "@/api/content"; 
+import { viewProducts } from "@/api/product";   
 import { getNotices, removeNotice } from "@/api/notice";  
 import {getBillCountApi, getBillsApi} from "@/api/order";
 import { mapState } from "vuex";
@@ -145,22 +145,22 @@ export default {
         }
       })
     },
-    getGiftInventory(){
+    getProductInventory(){
       let params = {
         leftcount:1
       }
-      viewGifts(params).then(({data:{status, msg}})=>{
+      viewProducts(params).then(({data:{status, msg}})=>{
         if (status == 0){
           this.inventories = msg  
           console.log(msg)
         }
       })
     },
-    getGiftCount(){
+    getProductCount(){
       let params = {
         count:1
       }
-      viewGifts(params).then(({data:{status, msg}})=>{
+      viewProducts(params).then(({data:{status, msg}})=>{
         if (status == 0){
           this.unready = msg.unready
           this.selling = msg.selling
@@ -273,7 +273,7 @@ export default {
       }
       else if(index == 11){
         this.$router.push({
-           name: "gift-managet", 
+           name: "product-managet", 
         });
       }
       else if(index == 12){
@@ -376,7 +376,7 @@ export default {
     },
     gotoProduct(index){
        this.$router.push({
-        name: "gift-manage",
+        name: "product-manage",
         query:{
           index:index
         }
@@ -470,8 +470,8 @@ export default {
     this.getDatas()
     this.getBillCount() 
     this.getNoticeList();
-    this.getGiftCount()
-    this.getGiftInventory()
+    this.getProductCount()
+    this.getProductInventory()
   },
 };
 </script>
@@ -502,7 +502,7 @@ export default {
             <el-card class="links">
                 <div class="header-stat">
                     <img class="img"
-                    src="@/assets/operateCenter/gift.png" alt="">
+                    src="@/assets/operateCenter/product.png" alt="">
                     <div class="stat-num">{{cashcount}}</div>
                 </div>
                 <div class="header-text">现金订单(笔)</div>
@@ -512,7 +512,7 @@ export default {
             <el-card class="links" >
                 <div class="header-stat">
                     <img class="img"
-                    src="@/assets/operateCenter/gift.png" alt="">
+                    src="@/assets/operateCenter/product.png" alt="">
                     <div class="stat-num">{{yuecount}}</div>
                 </div>
                 <div class="header-text">余额支付订单(笔)</div>

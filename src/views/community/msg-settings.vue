@@ -1,6 +1,6 @@
 <template>
   <!-- 阿姨添加和修改 -->
-  <main class="edit-product">
+  <main class="edit-content">
       <el-row :gutter="10">
         <el-col :span="24">
           <el-form
@@ -230,7 +230,7 @@ export default {
 .upload-license .el-upload-dragger {
   width: 350px;
 }
-.edit-product {
+.edit-content {
   .el-form {
     label {
       font-weight: 600;

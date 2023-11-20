@@ -297,7 +297,7 @@ getFixedFeeApi,
 cudDynamicFeeApi,
 getDynamicFeeApi } from "@/api/fee";
 export default {
-  name: "edit-product",
+  name: "edit-content",
   data() {
     return {
       deleteTitle: "",

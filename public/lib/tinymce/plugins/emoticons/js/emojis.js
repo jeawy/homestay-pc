@@ -5784,7 +5784,7 @@ window.tinymce.Resource.add("tinymce.plugins.emoticons", {
     fitzpatrick_scale: false,
     category: "objects"
   },
-  gift: {
+  product: {
     keywords: [ "present", "birthday", "christmas", "xmas" ],
     char: "\ud83c\udf81",
     fitzpatrick_scale: false,
@@ -5827,7 +5827,7 @@ window.tinymce.Resource.add("tinymce.plugins.emoticons", {
     category: "objects"
   },
   red_envelope: {
-    keywords: [ "gift" ],
+    keywords: [ "product" ],
     char: "\ud83e\udde7",
     fitzpatrick_scale: false,
     category: "objects"
@@ -5893,7 +5893,7 @@ window.tinymce.Resource.add("tinymce.plugins.emoticons", {
     category: "objects"
   },
   package: {
-    keywords: [ "mail", "gift", "cardboard", "box", "moving" ],
+    keywords: [ "mail", "product", "cardboard", "box", "moving" ],
     char: "\ud83d\udce6",
     fitzpatrick_scale: false,
     category: "objects"

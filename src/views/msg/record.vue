@@ -142,7 +142,7 @@
 </template>
 
 <script>
-import { queryProductList, deleteProduct } from "@/api/product";
+import { queryProductList, deleteProduct } from "@/api/content";
 export default {
   data() {
     return {

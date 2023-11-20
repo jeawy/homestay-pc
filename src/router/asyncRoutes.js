@@ -67,7 +67,7 @@ export default function asyncRoutes(params) {
       redirect: "noRedirect",
       meta: {
         title: "购物卡管理",
-        icon: "gift"
+        icon: "content"
       },
       children: [
         {
@@ -101,40 +101,40 @@ export default function asyncRoutes(params) {
       ]
     },
     {
-      path: "/gift-manage",
+      path: "/product-manage",
       component: Layout,
       redirect: "noRedirect",
       meta: {
         title: "商品管理",
-        icon: "gift"
+        icon: "product"
       },
       children: [
         {
-          path: "gift-manage",
-          name: "gift-manage",
-          component: () => import("@/views/gift-manage"),
+          path: "product-manage",
+          name: "product-manage",
+          component: () => import("@/views/product-manage"),
           meta: {
             title: "商品展示",
-            icon: "gift"
+            icon: "product"
           }
         },
         {
           path: "add-gifts",
           name: "add-gifts",
-          component: () => import("@/views/gift-manage/add"),
+          component: () => import("@/views/product-manage/add"),
           meta: {
             title: "添加商品",
-            icon: "gift"
+            icon: "product"
           }
         },
         {
           path: "commodity-detail",
           name: "commodity-detail",
           hidden: true,
-          component: () => import("@/views/gift-manage/commodity-detail"),
+          component: () => import("@/views/product-manage/commodity-detail"),
           meta: {
             title: "商品详情",
-            icon: "gift"
+            icon: "product"
           }
         }
       ]
@@ -164,7 +164,7 @@ export default function asyncRoutes(params) {
       ]
     },
     {
-      path: "/product",
+      path: "/content",
       component: Layout,
       redirect: "noRedirect",
       alwaysShow: true,
@@ -174,9 +174,9 @@ export default function asyncRoutes(params) {
       },
       children: [
         {
-          path: "product",
-          name: "product",
-          component: () => import("@/views/product/info"),
+          path: "content",
+          name: "content",
+          component: () => import("@/views/content/info"),
           meta: {
             title: "列表",
             icon: "liebiao"
@@ -187,21 +187,21 @@ export default function asyncRoutes(params) {
           name: "edit-info",
           hidden: false,
 
-          component: () => import("@/views/product/edit-info"),
+          component: () => import("@/views/content/edit-info"),
           meta: {
             title: "发布",
             icon: "tianjia"
           }
         },
         {
-          path: "product-detail",
-          name: "product-detail",
+          path: "content-detail",
+          name: "content-detail",
           hidden: true,
 
-          component: () => import("@/views/product/product-detail"),
+          component: () => import("@/views/content/content-detail"),
           meta: {
             title: "详情",
-            icon: "gift"
+            icon: "content"
           }
         }
       ]

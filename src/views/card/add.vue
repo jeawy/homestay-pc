@@ -216,7 +216,7 @@ export default {
         this.total = data.msg.total
       });
     },
-    getGiftsClass() {
+    getProductsClass() {
       queryCards().then(({ data }) => {
         this.giftsClassList = [...data.msg];
       });

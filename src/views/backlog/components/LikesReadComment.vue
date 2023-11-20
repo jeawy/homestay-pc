@@ -156,7 +156,7 @@ import {
   modifyCommentApi,
   uploadFile,
   getCommentsApi
-} from "@/api/product";
+} from "@/api/content";
 import dayjs from "dayjs";
 import tuiNomore from "./nomore";
 import axios from "axios";

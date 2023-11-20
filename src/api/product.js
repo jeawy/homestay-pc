@@ -1,65 +1,43 @@
-import AXIOS from "@/libs/ajax";
-
-//  获取消息内容
-export const getNoticesApi = (params, isLogin = false) => {
-  if (isLogin) {
-    return AXIOS.get("/product/products/", { params });
+import AXIOS from '@/libs/request'
+//查看商品
+export function viewProducts(params){
+    return AXIOS.get('/product/product/',{params})
+}
+//查看商品分类
+export function viewProductsClass(){
+  return AXIOS.get('/product/category/')
+}
+//查看商品规格
+export function viewProductsSpecs(params){
+  return AXIOS.get('/product/specifications/',{params})
+}
+//上传附件
+export function uploadAttachment(data) {
+    return AXIOS.post('/appfile/appfile/',data)
   }
-  return AXIOS.get("/product/anonymous/", { params });
-};
+  //添加商品
+  export function addProducts(data) {
+    return AXIOS.post('/product/product/', data)
+  }  
+  //修改商品
+  export function alterProduct(data) {
+    return AXIOS.post('/product/product/', data )
+  }
+  //删除商品
+export function deleteProduct(data) {
+  return AXIOS.post('/product/product/?delete', data)
+}
+//添加商品规格
+export function addProductSpecs(data) {
+  return AXIOS.post('/product/specifications/', data)
+}  
+//修改商品规格
 
-//  点赞或者取消赞
-export const updateLikeApi = data => AXIOS.post("/like/like/", data);
+export function alterProductSpecs(data) {
+  return AXIOS.post('/product/specifications/?put', data)
+}  
 
-// 获取点赞列表
-export const getLikesApi = params => AXIOS.get("/like/anonymous/", { params });
 
-// 获取阅读数
-export const getCountApi = params => AXIOS.get("/like/count/", { params });
-
-export const modifyCommentApi = data => AXIOS.post("/comment/comment/", data);
-// 匿名获取
-export const getCommentsApi = params =>
-  AXIOS.get("/comment/anonymous/", { params });
-
-export const uploadFile = data =>
-  AXIOS.post("/comment/comment/", data, {
-    headers: {
-      "Content-Type": "multipart/form-data;charset=UTF-8"
-    },
-    transformRequest: [data => data]
-  });
-
-  export const uploadImage = (data,onProgress) =>
-  AXIOS.post("/api/appfile/appfile/", data, {
-    headers: {
-      "Content-Type": "multipart/form-data;charset=UTF-8"
-    },
-    onUploadProgress(e){
-      onProgress(Math.round(e.loaded / e.total * 100))
-    },
-    transformRequest: [data => data]
-  });
-
-  // 新增商品
-export const addProduct = data =>
-AXIOS.post("/product/products/", data);
-// 修改商品
-export const putProduct = data =>
-AXIOS.post("/product/products/", data);
-// 查询列表
-export const queryUserList = () =>
-AXIOS.get("/users/list/?usertype=0");
-// 查询列表
-export const querycategoryList = () =>
-AXIOS.get("/category/categories/");
-
-//查询
-export const queryProductList = params =>
-  AXIOS.get("/product/products/", { params });
-//查询对应状态下的订单详情
-export const queryProductDetail = params =>
-  AXIOS.get("/product/products/", { params });
-//删除订单
-export const deleteProduct = data =>
-  AXIOS.post("/product/products/?01", data);
+export function queryDetail(params){
+  return AXIOS.get('/product/anonymous/',{params})
+}

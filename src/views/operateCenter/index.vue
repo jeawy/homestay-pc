@@ -16,7 +16,7 @@
             <el-card>
                 <div class="header-stat">
                     <img class="img"
-                    src="@/assets/operateCenter/gift.png" alt="">
+                    src="@/assets/operateCenter/product.png" alt="">
                     <div class="stat-num">19</div>
                 </div>
                 <div class="header-text">商品发布(个)</div>

@@ -25,8 +25,8 @@
         <LikesReadComment
           :entityuuid="$route.query.id"
           :entitytype="9"
-          :baseUrl="`https://cqshop.chidict.com/images/`"
-          :baseAppUrl="`https://cqshop.chidict.com/app/`"
+          :baseUrl="`https://shopdemo.chidict.com/images/`"
+          :baseAppUrl="`https://shopdemo.chidict.com/app/`"
           :owneruuid="result.creator_info.uuid"
           :allowcomment="result.allow_comment"
           :orguuid="result.org.uuid"
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { getNoticesApi } from "@/api/product";
+import { getNoticesApi } from "@/api/content";
 import LikesReadComment from "./components/LikesReadComment";
 
 import dayjs from "dayjs";

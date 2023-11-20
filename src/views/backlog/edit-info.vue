@@ -1,6 +1,6 @@
 <template>
   <!-- 添加和修改 -->
-  <main class="edit-product">
+  <main class="edit-content">
     <el-form
       :model="formData"
       status-icon
@@ -36,7 +36,7 @@ import {
 import { getToken } from "@/utils/auth";
 import tinymce from "@/components/Tinymce";
 export default {
-  name: "edit-product",
+  name: "edit-content",
   data() {
     return {
       type: "add",
@@ -198,7 +198,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.edit-product {
+.edit-content {
   .el-form {
     label {
       font-weight: 600;

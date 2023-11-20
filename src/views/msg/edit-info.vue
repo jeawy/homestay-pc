@@ -1,6 +1,6 @@
 <template>
   <!-- 添加和修改 -->
-  <main class="edit-product">
+  <main class="edit-content">
     <el-form
       :model="formData"
       status-icon
@@ -47,13 +47,13 @@ import {
   queryUserList,
   querycategoryList,
   putProduct,
-} from "@/api/product";
+} from "@/api/content";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import { quillEditor } from "vue-quill-editor";
 export default {
-  name: "edit-product",
+  name: "edit-content",
   data() {
     return {
       type: "add",
@@ -221,7 +221,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.edit-product {
+.edit-content {
   .el-form {
     label {
       font-weight: 600;

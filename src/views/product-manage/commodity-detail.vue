@@ -67,7 +67,7 @@
 isbook  是否为预约商品
 
 */
-import { queryDetail } from "@/api/gift";
+import { queryDetail } from "@/api/content";
 export default {
   name: "CommodityDetail",
   data() {

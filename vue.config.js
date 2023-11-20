@@ -25,7 +25,7 @@ module.exports = {
     },
     proxy: {
       '/prx': {
-        target: 'https://cqshop.chidict.com',
+        target: 'https://shopdemo.chidict.com',
         changeOrigin: true,
         pathRewrite: {
           '^/prx': ''

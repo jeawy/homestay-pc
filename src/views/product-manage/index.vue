@@ -146,7 +146,7 @@
               :underline="false"
               icon="el-icon-delete"
               type="danger"
-              @click="delGift(row )"
+              @click="delProduct(row )"
             />
           </el-tooltip>
           <br/>
@@ -155,26 +155,26 @@
             v-if="row.recommend == 0"
               :underline="false" 
               type="success"
-              @click="recommendGift(row , true)"
+              @click="recommendProduct(row , true)"
             >推荐商品</el-link>
             <el-link
             v-else
               :underline="false" 
               type="success"
-              @click="recommendGift(row , false)"
+              @click="recommendProduct(row , false)"
             >取消推荐</el-link>
         
             <el-link
             v-if="row.ready == 0"
               :underline="false" 
               type="success"
-              @click="readyGift(row, true )"
+              @click="readyProduct(row, true )"
             >上架商品</el-link>
              <el-link
               v-else
               :underline="false" 
               type="danger"
-              @click="readyGift(row, false )"
+              @click="readyProduct(row, false )"
             >下架商品</el-link>
          
         </template>
@@ -196,10 +196,10 @@
 
 <script>
 import {
-  viewGifts, 
-  viewGiftsClass, 
-  deleteGift
-} from "@/api/gift"; 
+  viewProducts, 
+  viewProductsClass, 
+  deleteProduct
+} from "@/api/product"; 
 import {  getCategory } from "@/api/category";
 export default {
   data() {
@@ -246,7 +246,7 @@ export default {
     handleQueryList(){ 
       console.log(1111)
        this.currentPage = 1
-       this.getviewGifts()
+       this.getviewProducts()
     },
     targetDetail(uuid) {
       this.$router.push({
@@ -270,7 +270,7 @@ export default {
         }
       })
     },
-    getviewGifts() {
+    getviewProducts() {
       this.isLoading = true; 
       if (this.queryForm.selling  == 1) {
         this.queryForm.selling_prodcut = 1;
@@ -295,18 +295,18 @@ export default {
         this.queryForm.leftcount_prodcut  = 0;
       }
 
-      viewGifts({...this.queryForm,
+      viewProducts({...this.queryForm,
       page:this.currentPage, pagenum:this.paginationsize}).then(({ data }) => { 
         this.giftList = [...data.msg];
         this.total = this.giftList.length
       });
     },
-    getGiftsClass() {
-      viewGiftsClass().then(({ data }) => {
+    getProductsClass() {
+      viewProductsClass().then(({ data }) => {
         this.giftsClassList = [...data.msg];
       });
     },
-    readyGift(item, ready=false) {
+    readyProduct(item, ready=false) {
       let msg = "下架该商品，是否继续?"
       if (ready == true){
         msg = "上架该商品，是否继续?"
@@ -316,18 +316,18 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        deleteGift({ method: "put", uuid: item.uuid, ready:ready?1:0 }).then(({ data }) => {
+        deleteProduct({ method: "put", uuid: item.uuid, ready:ready?1:0 }).then(({ data }) => {
         
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.getviewGifts();
+            this.getviewProducts();
           } else {
             this.$message.error(data.msg);
           }
         });
       });
     },
-     recommendGift(item, recommend=false) {
+     recommendProduct(item, recommend=false) {
       let msg = "取消推荐该商品，是否继续?"
       if (recommend == true){
         msg = "推荐该商品，是否继续?"
@@ -337,11 +337,11 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        deleteGift({ method: "put", uuid: item.uuid, recommend:recommend?1:0 }).then(({ data }) => {
+        deleteProduct({ method: "put", uuid: item.uuid, recommend:recommend?1:0 }).then(({ data }) => {
         
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.getviewGifts();
+            this.getviewProducts();
           } else {
             this.$message.error(data.msg);
           }
@@ -349,17 +349,17 @@ export default {
       });
     },
     //删除
-    delGift(item) {
+    delProduct(item) {
       this.$confirm("此操作将永久删除该商品，是否继续?", "提示", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        deleteGift({ method: "delete", uuids: item.uuid }).then(({ data }) => {
+        deleteProduct({ method: "delete", uuids: item.uuid }).then(({ data }) => {
           //console.log(data.msg);
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.getviewGifts();
+            this.getviewProducts();
           } else {
             this.$message.error(data.msg);
           }
@@ -370,8 +370,8 @@ export default {
     handleSuccess(response, file, fileList) {
       if (response.status == 0) {
         this.SRC = this.$store.state.BASE_URL + response.msg;
-        this.addGiftsForm["picture"] = response.msg;
-        // this.addGiftsForm.image_id = response.id;
+        this.addProductsForm["picture"] = response.msg;
+        // this.addProductsForm.image_id = response.id;
       } else {
         this.$message.error(response.msg);
       }
@@ -411,8 +411,8 @@ export default {
         this.queryForm.leftcount = true 
       }
     }
-    this.getviewGifts();
-    this.getGiftsClass();
+    this.getviewProducts();
+    this.getProductsClass();
     this.getCategories()
   }
 };

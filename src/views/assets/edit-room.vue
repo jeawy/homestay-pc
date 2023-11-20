@@ -1,6 +1,6 @@
 <template>
   <!-- 添加和修改 -->
-  <main class="edit-product">
+  <main class="edit-content">
     <el-form
       :model="formData"
       status-icon
@@ -517,7 +517,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.edit-product {
+.edit-content {
   .el-form {
     label {
       font-weight: 600;

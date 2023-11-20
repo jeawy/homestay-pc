@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :model="addGiftsForm" status-icon ref="addGiftsForm" label-width="90px">
+    <el-form :model="addProductsForm" status-icon ref="addProductsForm" label-width="90px">
       <div style="display:flex">
         <div  class="mainpic">
           <!-- id{{id}} -->
@@ -36,7 +36,7 @@
             
             </el-cascader> 
             <el-form-item label="商品标题" prop="title">
-              <el-input v-model="addGiftsForm.title"></el-input>
+              <el-input v-model="addProductsForm.title"></el-input>
             </el-form-item> 
              
             <el-checkbox v-model="isbook"  class="book">预约商品</el-checkbox> 
@@ -115,13 +115,13 @@
         <img width="100%" :src="baseImage+dialogImageUrl" alt />
       </el-dialog>
 
-      <tinymce v-model="addGiftsForm.content" />
+      <tinymce v-model="addProductsForm.content" />
       <!-- <el-form-item label="商品说明" prop="content" style="margin-top:10px">
-        <el-input v-model="addGiftsForm.content" type="textarea" :rows="5" placeholder="请输入商品说明"></el-input>
+        <el-input v-model="addProductsForm.content" type="textarea" :rows="5" placeholder="请输入商品说明"></el-input>
       </el-form-item>-->
       <div class="btn">
         <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="submitForm('addGiftsForm','tableData')">{{uuid?'修改':'发布'}}</el-button>
+        <el-button type="primary" @click="submitForm('addProductsForm','tableData')">{{uuid?'修改':'发布'}}</el-button>
       </div>
     </el-form>
   </div>
@@ -129,13 +129,13 @@
 
 <script>
 import {
-  viewGifts,
-  addGifts,
-  viewGiftsClass,
-  viewGiftsSpecs,
-  addGiftSpecs,
-  alterGift
-} from "@/api/gift";
+  viewProducts,
+  addProducts,
+  viewProductsClass,
+  viewProductsSpecs,
+  addProductSpecs,
+  alterProduct
+} from "@/api/product";
 import {  getCategory } from "@/api/category";
 import { getToken } from "@/utils/auth";
 import tinymce from "@/components/Tinymce";
@@ -173,7 +173,7 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       dialogShow1: false,
-      addGiftsForm: {
+      addProductsForm: {
         category: null,
         title: null,
         picture: null,
@@ -258,12 +258,12 @@ export default {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
-    getviewGifts() { 
-      viewGifts({
+    getviewProducts() { 
+      viewProducts({
         uuid: this.uuid
       } ).then((res) => {
         if (res.data.status == 0){
-          this.addGiftsForm = res.data.msg
+          this.addProductsForm = res.data.msg
           console.log(res.data.msg)
           this.fileList  = []
           for (var i = 0; i < res.data.msg.turns.length; i++){
@@ -276,8 +276,8 @@ export default {
           this.shopcard = res.data.msg.gifttype == 0 ? false:true;
           this.ready = res.data.msg.ready == 0 ? false:true;
           this.recommend = res.data.msg.recommend == 0 ? false:true;
-          this.SRC = this.addGiftsForm.picture
-          this.tableData = this.addGiftsForm.specifications
+          this.SRC = this.addProductsForm.picture
+          this.tableData = this.addProductsForm.specifications
         }
         else{
           this.$notify({
@@ -290,8 +290,8 @@ export default {
         } 
       });
     },
-    getGiftsClass() {
-      viewGiftsClass().then(({ data }) => {
+    getProductsClass() {
+      viewProductsClass().then(({ data }) => {
         this.giftsClassList = [...data.msg];
       });
     },
@@ -304,7 +304,7 @@ export default {
     handleSuccess(response, file, fileList) {
       if (response.status == 0) {
         this.SRC =   response.msg;
-        this.addGiftsForm["picture"] = response.msg; 
+        this.addProductsForm["picture"] = response.msg; 
       } else {
         this.$message.error(response.msg);
       }
@@ -322,41 +322,41 @@ export default {
       }
     },
     //添加商品，修改商品
-    submitForm(addGiftsForm, tableData) {
-      let gift = {};
-        gift = { 
-          title: this.addGiftsForm.title, 
-          content: this.addGiftsForm.content,
-          picture: this.addGiftsForm.picture, 
+    submitForm(addProductsForm, tableData) {
+      let product = {};
+        product = { 
+          title: this.addProductsForm.title, 
+          content: this.addProductsForm.content,
+          picture: this.addProductsForm.picture, 
           specifications: JSON.stringify( this.tableData), 
        };
       if(this.category.length > 0){
-        gift.category = this.category[this.category.length -1]
+        product.category = this.category[this.category.length -1]
       }
       if (this.isbook == true){
-        gift['isbook'] = 1
+        product['isbook'] = 1
       }
       else{
-        gift['isbook'] = 0
+        product['isbook'] = 0
       } 
       if (this.ready == true){
-        gift['ready'] = 1
+        product['ready'] = 1
       }
       else{
-        gift['ready'] = 0
+        product['ready'] = 0
       } 
       if (this.recommend == true){
-        gift['recommend'] = 1
+        product['recommend'] = 1
       }
       else{
-        gift['recommend'] = 0
+        product['recommend'] = 0
       } 
       if (this.shopcard == true){
-        gift['gifttype'] = 1
-        gift['cardtype'] = this.cardtype
+        product['gifttype'] = 1
+        product['cardtype'] = this.cardtype
       }
       else{
-        gift['gifttype'] = 0
+        product['gifttype'] = 0
       } 
       console.log(this.fileList)
       for (var i = 0; i <this.fileList.length; i++){
@@ -364,63 +364,63 @@ export default {
         if(i ==0){
           //
 
-          gift.turns = this.fileList[i].url.replace(this.baseImage, "")
+          product.turns = this.fileList[i].url.replace(this.baseImage, "")
         }
         else{
-          gift.turns += ","+this.fileList[i].url.replace(this.baseImage, "") 
+          product.turns += ","+this.fileList[i].url.replace(this.baseImage, "") 
         }
           
       } 
-      console.log(gift.turns)
+      console.log(product.turns)
      
       if (this.uuid) {
-         gift.method = "put"
-         gift.uuid = this.uuid
-        if (gift.turns == null) {
-          delete gift.turns;
+         product.method = "put"
+         product.uuid = this.uuid
+        if (product.turns == null) {
+          delete product.turns;
         }
-        if (gift.title == null) {
-          delete gift.title;
+        if (product.title == null) {
+          delete product.title;
         }
-        if (gift.category == null) {
-          delete gift.category;
+        if (product.category == null) {
+          delete product.category;
         }
-        if (gift.content == "") {
-          delete gift.content;
+        if (product.content == "") {
+          delete product.content;
         }
-        if (gift.picture == null) {
-          delete gift.picture;
+        if (product.picture == null) {
+          delete product.picture;
         }
 
-        alterGift(gift).then(({ data }) => {
+        alterProduct(product).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.addGiftsForm = {};
+            this.addProductsForm = {};
             this.SRC = "";
-            this.addGiftsForm.content = "";
+            this.addProductsForm.content = "";
             this.tableData = [];
-            this.getviewGifts();
+            this.getviewProducts();
           } else {
             this.$message.error(data.msg); 
           }
         });
       } else {  
-        if (gift.turns == null) {
-          delete gift.turns;
+        if (product.turns == null) {
+          delete product.turns;
         }
-        //delete gift.specifications
-        if (gift.specifications == null || gift.specifications.length === 0) {
-          delete gift.specifications;
+        //delete product.specifications
+        if (product.specifications == null || product.specifications.length === 0) {
+          delete product.specifications;
         }
-        addGifts(gift).then(({ data }) => {
+        addProducts(product).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.addGiftsForm = {};
+            this.addProductsForm = {};
             this.SRC = "";
-            this.addGiftsForm.content = "";
+            this.addProductsForm.content = "";
             this.tableData = [];
             this.$router.push({
-              name:"gift-manage"
+              name:"product-manage"
             })
           } else {
             this.$message.error(data.msg); 
@@ -429,9 +429,9 @@ export default {
       }
     },
     cancel() {
-      this.addGiftsForm = [];
+      this.addProductsForm = [];
       this.SRC = "";
-      this.addGiftsForm.content = "";
+      this.addProductsForm.content = "";
       this.tableData = [];
     },
     getCategoryList(){
@@ -475,12 +475,12 @@ export default {
   mounted() {
     if (this.$route.query.uuid) {
       this.uuid = this.$route.query.uuid; 
-      this.getviewGifts();
+      this.getviewProducts();
     } 
     else{
 
     }  
-    this.getGiftsClass(); 
+    this.getProductsClass(); 
   }
 };
 </script>

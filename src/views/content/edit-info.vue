@@ -1,6 +1,6 @@
 <template>
   <!-- 添加和修改 -->
-  <main class="edit-product">
+  <main class="edit-content">
     <el-row :gutter="10">
       <el-col :span="16">
       <el-form
@@ -95,12 +95,12 @@ import {
   queryUserList,
   querycategoryList,
   putProduct,
-} from "@/api/product";
+} from "@/api/content";
 import { getToken } from "@/utils/auth";
 import tinymce from "@/components/Tinymce";
 
 export default {
-  name: "edit-product",
+  name: "edit-content",
   data() {
     return {
       isDraftLoading:false,
@@ -344,7 +344,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.edit-product {
+.edit-content {
   .el-form {
     label {
       font-weight: 600;

@@ -1,6 +1,6 @@
 <template>
   <!-- 小区添加和修改 -->
-  <main class="edit-product">
+  <main class="edit-content">
     <el-form
       :model="formData"
       status-icon
@@ -107,7 +107,7 @@ import { addOrganizeApi, getOrganizeApi } from "@/api/organize";
 
 import { getToken } from "@/utils/auth";
 export default {
-  name: "edit-product",
+  name: "edit-content",
   data() {
     return {
       type: "add",
@@ -303,7 +303,7 @@ export default {
   width: 200px !important;
   height: 200px !important;
 }
-.edit-product {
+.edit-content {
   .el-form {
     label {
       font-weight: 600;

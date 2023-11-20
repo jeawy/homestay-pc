@@ -252,7 +252,7 @@ export default {
         if (response.status == 0) {
             this.SRC = this.$store.state.BASE_URL + response.msg;
             this.actForm["picture"]= response.msg;
-            // this.addGiftsForm.image_id = response.id;
+            // this.addProductsForm.image_id = response.id;
         } else {
             this.$message.error(response.msg);
         }

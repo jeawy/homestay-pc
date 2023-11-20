@@ -12,7 +12,7 @@
 
 import plugins from "./plugins";
 import toolbar from "./toolbar";
-import { uploadImage } from "@/api/product";
+import { uploadImage } from "@/api/content";
 
 export default {
   name: "Tinymce",

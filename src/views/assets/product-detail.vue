@@ -33,9 +33,9 @@
 </template>
 
 <script>
-import { queryProductDetail } from "@/api/gift";
+import { queryProductDetail } from "@/api/content";
 export default {
-  name: "edit-product",
+  name: "edit-content",
   data() {
     return {
       detailData: {

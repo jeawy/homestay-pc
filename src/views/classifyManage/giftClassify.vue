@@ -70,14 +70,14 @@
                         >
                           <el-dropdown-item>修改</el-dropdown-item>
                         </router-link>
-                        <el-dropdown-item @click.native="delGift(item)">删除</el-dropdown-item>
+                        <el-dropdown-item @click.native="delProduct(item)">删除</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </div>
                   <div class=".el-card__header">
                     <div slot="header" class="box-card-header">
                       <router-link
-                        :to="{name:'gift-detail',params:{id:item.id},query:{type:item.pro_type}}"
+                        :to="{name:'product-detail',params:{id:item.id},query:{type:item.pro_type}}"
                       >
                         <el-image
                           class="mini-image"
@@ -159,9 +159,9 @@ import {
   putClass
 } from "@/api/classManage";
 import {
-  viewGifts,
-  deleteGift
-} from "@/api/gift";
+  viewProducts,
+  deleteProduct
+} from "@/api/product";
 import { getToken } from "@/utils/auth";
 import { mapState } from "vuex";
 export default {
@@ -204,22 +204,22 @@ export default {
   },
   methods: {
     //获取所有商品
-    getviewGifts() {
-      viewGifts().then(({ data }) => {
+    getviewProducts() {
+      viewProducts().then(({ data }) => {
         this.giftList = [...data.msg];
       });
     },
     //删除商品
-    delGift(item) {
+    delProduct(item) {
       this.$confirm("此操作将永久删除该用户，是否继续?", "提示", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        deleteGift({ method: "delete", ids: item.id }).then(({ data }) => {
+        deleteProduct({ method: "delete", ids: item.id }).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.getviewGifts();
+            this.getviewProducts();
           } else {
             this.$message.error(data.msg);
           }
@@ -303,7 +303,7 @@ export default {
     //类别单击触发事件
     handleGroupClick(data) {
       this.tableLoading = true;
-      viewGifts({category:data.name}).then(({ data }) => {
+      viewProducts({category:data.name}).then(({ data }) => {
         this.giftList = [...data.msg];
         this.tableLoading = false;
       });
@@ -341,7 +341,7 @@ export default {
   },
   created() {
     this.getClassList();
-    this.getviewGifts();
+    this.getviewProducts();
     if (this.$route.query.id) {
       this.pageRouter();
     }
