@@ -106,7 +106,7 @@ export default function asyncRoutes(params) {
       redirect: "noRedirect",
       meta: {
         title: "商品管理",
-        icon: "product"
+        icon: "gift"
       },
       children: [
         {
@@ -115,16 +115,25 @@ export default function asyncRoutes(params) {
           component: () => import("@/views/product-manage"),
           meta: {
             title: "商品展示",
-            icon: "product"
+            icon: "gift"
           }
         },
         {
-          path: "add-gifts",
-          name: "add-gifts",
+          path: "add-room",
+          name: "add-room",
+          component: () => import("@/views/product-manage/addroom?minsu"),
+          meta: {
+            title: "添加民宿",
+            icon: "gift"
+          }
+        },
+        {
+          path: "add-product",
+          name: "add-product",
           component: () => import("@/views/product-manage/add"),
           meta: {
-            title: "添加商品",
-            icon: "product"
+            title: "添加其他商品",
+            icon: "gift"
           }
         },
         {

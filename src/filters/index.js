@@ -30,6 +30,16 @@ export function dateHMSFormat(date) {
         return ''
     }
 }
+
+//时间格式化 HH:mm
+export function dateDayFormat(date) {
+    if (date) {
+        date *= 1000
+        return dayjs(date).format("DD")
+    } else {
+        return ''
+    }
+}
 //活动状态格式化
 export function activityStatus(code) {
     switch (code) {

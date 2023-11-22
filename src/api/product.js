@@ -37,6 +37,10 @@ export function alterProductSpecs(data) {
   return AXIOS.post('/product/specifications/?put', data)
 }  
 
+//获取日历信息
+export function getCalendarApi(params) {
+  return AXIOS.get('/product/tools/', {params})
+}  
 
 export function queryDetail(params){
   return AXIOS.get('/product/anonymous/',{params})
