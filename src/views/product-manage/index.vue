@@ -204,7 +204,7 @@ import {  getCategory } from "@/api/category";
 export default {
   data() {
     return {
-      baseImage:process.env.VUE_APP_BASE_IMAGE +"/",
+      baseImage:process.env.VUE_APP_BASE_IMAGE +"/images/",
       giftList: [],
       giftsClassList: [],
       dialogShow2: false,

@@ -16,6 +16,16 @@ export function uploadAttachment(data) {
     return AXIOS.post('/appfile/appfile/',data)
   }
   //添加商品
+  
+  export function addHomeStayProducts(data) {
+    return AXIOS.post('/product/product/', data, {
+      headers: {
+          'Content-Type': 'multipart/form-data;charset=UTF-8',
+      }
+    })
+  } 
+
+
   export function addProducts(data) {
     return AXIOS.post('/product/product/', data)
   }  

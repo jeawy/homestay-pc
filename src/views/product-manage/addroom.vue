@@ -12,17 +12,19 @@
           <el-upload
             accept="picture/jpeg, picture/gif, picture/png"
             ref="upload"
-            class="upload-demo"
-            action="prx/api/appfile/appfile/"
-            :headers="headers"
-            :on-success="handleSuccess"
+            class="upload-demo" 
+            :headers="headers" 
+            action=""
+            :http-request="HandleMainImg" 
+            :auto-upload="false"
             drag
             :show-file-list="false"
+            :on-change="handleAvatarSuccessMainPic"
           >
             <el-image
-              v-if="SRC"
+              v-if="preMainPic"
               style="width: 100%; height: 100%"
-              :src="baseImage + SRC"
+              :src="preMainPic"
             >
             </el-image>
             <template v-else>
@@ -33,7 +35,76 @@
               </div>
             </template>
           </el-upload>
+          <el-upload
+            accept=".mp4"
+            ref="uploadvideo"
+            class="upload-demo" 
+            :headers="headers"
+            action=""
+            :auto-upload="false"
+            :http-request="HandleVideo" 
+            drag
+            :show-file-list="false"
+            :on-change="handleAvatarSuccessMainVideo"
+          >
+          <video width="100%" height="100%" :src="priVideoPath"   controls v-if="priVideoPath">
+            
+          </video>
+            <template v-else>
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">
+                民宿封面视频，或
+                <em>点击上传</em>
+              </div>
+            </template>
+          </el-upload>
+          <div >
+              <el-form-item label-width="45px"  label="面积:" prop="area">
+                <el-input
+                  v-model="addProductsForm.area" 
+                  type="number"
+                  style="width: 100px;"
+                ></el-input>
+              </el-form-item>
+              <div class="title">位置信息:</div>
+              <el-form-item label-width="45px" label="地址:" prop="address">
+                <el-input 
+                   
+                  v-model="addProductsForm.address"  
+                ></el-input>
+              </el-form-item>
+              <el-form-item label-width="45px" label="经度:" prop="longitude">
+                <el-input
+                  v-model="addProductsForm.longitude" 
+                  type="number"
+                  style="width: 150px;"
+                  placeholder="longitude"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label-width="45px" label="纬度:" prop="latitude">
+                <el-input
+                  v-model="addProductsForm.latitude" 
+                  type="number"
+                  placeholder="latitude"
+                  style="width: 150px;"
+                ></el-input>
+              </el-form-item>
+              <div class="title">入住时间:</div>
+              <el-form-item label-width="100px"  label="最早入住时间:" prop="checkin_earlest_time">
+                <el-input
+                  v-model="addProductsForm.checkin_earlest_time"  
+                  style="width: 150px;" 
+                ></el-input>
+              </el-form-item>
+              <el-form-item label-width="100px"  label="最晚退房时间:" prop="checkout_latest_time">
+                <el-input
+                  v-model="addProductsForm.checkout_latest_time"   
+                  style="width: 150px;"
+                ></el-input>
+              </el-form-item>
+          </div>
         </div>
+        
         <div>
           <div style="display: flex">
             <el-cascader
@@ -53,6 +124,7 @@
             >
           </div>
           <div class="title">房价设置:</div>
+          <p style="color:#bfbfbf">提示:只设置最近6个月工作日、周末及节假日的房价</p>
           <div style="display: flex">
             <el-form-item label="工作日价格:" prop="workday_price">
               <el-input
@@ -76,38 +148,57 @@
               ></el-input>
             </el-form-item>
             <div class="pricetype">
-              <el-radio v-model="cardtype" class="cardtype" :label="0"
+              <el-radio v-model="addProductsForm.pricemode" class="cardtype" :label="0"
                 >仅覆盖日历上未设定价格的日期</el-radio
               >
-              <el-radio v-model="cardtype" class="cardtype" :label="1"
+              <el-radio v-model="addProductsForm.pricemode" class="cardtype" :label="1"
                 >覆盖日历所有价格</el-radio
               >
             </div>
           </div>
+          
           <Calendar></Calendar>
         </div>
       </div>
-      <el-upload
-        accept="turns/jpeg, turns/gif, turns/png"
-        action="prx/api/appfile/appfile/"
-        :headers="headers"
-        list-type="picture-card"
-        :on-preview="handlePictureCardPreview"
-        :on-remove="handleRemove"
-        :on-success="handleSuccess1"
-        :limit="6"
-        :file-list="fileList"
-      >
-        <i class="el-icon-plus"></i>
-      </el-upload>
+     
       <el-dialog :visible.sync="dialogVisible">
         <img width="100%" :src="baseImage + dialogImageUrl" alt />
       </el-dialog>
+      <div style="display: flex">
+        <tinymce v-model="addProductsForm.content"  style="width: 450px;" />
+        <div class="video">
+          <el-upload
+            accept="turns/jpeg, turns/gif, turns/png"
+            action=""
+            ref="uploadfiles"
+            :headers="headers"
+            list-type="picture-card" 
+            :on-remove="handleRemove"
+            :http-request="handlFileList"  
+            :limit="9"
+            :auto-upload="false"
+            :file-list="fileList"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
 
-      <tinymce v-model="addProductsForm.content" />
-      <!-- <el-form-item label="民宿说明" prop="content" style="margin-top:10px">
-        <el-input v-model="addProductsForm.content" type="textarea" :rows="5" placeholder="请输入民宿说明"></el-input>
-      </el-form-item>-->
+        </div>
+      </div>
+      <div style="display: flex; width:100%">
+        <div class="rules">
+          <div>退订规则</div>
+          <el-input v-model="addProductsForm.unsubscribe_rules"  type="textarea" :rows="5" placeholder="退订规则"></el-input> 
+        </div>
+        <div class="rules">
+          <div>入住须知</div>
+          <el-input v-model="addProductsForm.checkin_notice"  type="textarea" :rows="5" placeholder="入住须知"></el-input> 
+        </div>
+        <div class="rules" >
+          <div>对客要求</div>
+          <el-input v-model="addProductsForm.customer_notice" type="textarea" :rows="5" placeholder="对客要求"></el-input> 
+        </div>
+      </div>
+      
       <div class="btn">
         <el-button @click="cancel">取消</el-button>
         <el-button
@@ -115,6 +206,7 @@
           @click="submitForm('addProductsForm', 'tableData')"
           >{{ uuid ? "修改" : "发布" }}</el-button
         >
+        <el-button type="primary" @click="nextStep">下一步</el-button>
       </div>
     </el-form>
     <BackToTop></BackToTop>
@@ -124,7 +216,7 @@
 <script>
 import {
   viewProducts,
-  addProducts,
+  addHomeStayProducts,
   viewProductsClass,
   viewProductsSpecs,
   addProductSpecs,
@@ -154,8 +246,7 @@ export default {
       baseImage: process.env.VUE_APP_BASE_IMAGE + "/",
       isbook: false, //是否为预约民宿
       ready: false, // 立即上架
-      recommend: false, //是否设为推荐民宿
-      shopcard: false, //表示是否为购物卡
+      recommend: false, //是否设为推荐民宿 
       tableData: [
         {
           // rowNum: "",
@@ -182,7 +273,26 @@ export default {
         picture: null,
         turns: null,
         content: null,
+        workday_price:null,
+        weekday_price:null,
+        holiday_price:null,
+
+        pricemode:0,
+        area:null,
+        address:null,
+        longitude:null,
+        latitude:null,
+ 
+        checkin_earlest_time:"12:00",
+        checkout_latest_time:"12:00",
+
+        unsubscribe_rules:"",
+        checkin_notice:"",
+        customer_notice:"", 
+ 
       },
+      preMainPic:"",
+      priVideoPath:"",
       rules: {
         spec_number: [
           {
@@ -198,6 +308,7 @@ export default {
         Authorization: `JWT ${getToken()}`,
       },
       category: "",
+      formfileData:null
     };
   },
   components: {
@@ -208,11 +319,36 @@ export default {
   name: "extra-audit",
   //判断能否添加规格
   created() {
-    this.getCategoryList();
-
-    console.log(this.year, this.month);
+    this.getCategoryList(); 
+    this.formfileData = new FormData()
   },
   methods: {
+    nextStep(){
+      //下一步 
+    },
+    submitFileForm(){
+      this.$refs.upload.submit()
+      this.$refs.uploadvideo.submit()
+      this.$refs.uploadfiles.submit() 
+    },
+    handleAvatarSuccessMainVideo(file){
+      this.priVideoPath = URL.createObjectURL(file.raw);
+      console.log(this.priVideoPath)
+    },
+    handleAvatarSuccessMainPic(file){
+      this.preMainPic = URL.createObjectURL(file.raw);
+    },
+    handlFileList(param){
+      //有几个文件会被执行几次
+      console.log(param)
+    },
+    HandleVideo(param){  
+      this.formfileData.append("videopath", param.file) 
+    },
+    HandleMainImg(param){ 
+      console.log(param.file) 
+      this.formfileData.append("mainpic", param.file) 
+    },
     handleRemove(file, fileList) {
       console.log(fileList);
       console.log(file);
@@ -222,11 +358,7 @@ export default {
           url: fileList[i].url,
         });
       }
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
-    },
+    }, 
     getviewProducts() {
       viewProducts({
         uuid: this.uuid,
@@ -241,8 +373,7 @@ export default {
             });
           }
           this.category = res.data.msg.categoryid;
-          this.isbook = res.data.msg.isbook == 0 ? false : true;
-          this.shopcard = res.data.msg.gifttype == 0 ? false : true;
+          this.isbook = res.data.msg.isbook == 0 ? false : true; 
           this.ready = res.data.msg.ready == 0 ? false : true;
           this.recommend = res.data.msg.recommend == 0 ? false : true;
           this.SRC = this.addProductsForm.picture;
@@ -266,77 +397,80 @@ export default {
       if (Type === 1) {
         this.dialogShow1 = true;
       }
-    },
-    //监听上传图片成功，成功后赋值给form ，并且赋值给图片src显示图片
-    handleSuccess(response, file, fileList) {
-      if (response.status == 0) {
-        this.SRC = response.msg;
-        this.addProductsForm["picture"] = response.msg;
-      } else {
-        this.$message.error(response.msg);
+    }, 
+    getEditData(){
+      // 数据格式化
+      this.formfileData.append("producttype", 0)
+      this.formfileData.append("title", this.addProductsForm.title)
+      this.formfileData.append("content", this.addProductsForm.content) 
+
+      this.formfileData.append("workday_price", this.addProductsForm.workday_price)
+      this.formfileData.append("weekday_price", this.addProductsForm.weekday_price) 
+      this.formfileData.append("holiday_price", this.addProductsForm.holiday_price)
+      this.formfileData.append("pricemode", this.addProductsForm.pricemode) 
+      this.formfileData.append("area", this.addProductsForm.area)
+
+
+      this.formfileData.append("address", this.addProductsForm.address) 
+      this.formfileData.append("longitude", this.addProductsForm.longitude)
+      this.formfileData.append("latitude", this.addProductsForm.latitude)
+      this.formfileData.append("checkin_earlest_time", this.addProductsForm.checkin_earlest_time)
+      this.formfileData.append("checkout_latest_time", this.addProductsForm.checkout_latest_time)
+
+
+      this.formfileData.append("unsubscribe_rules", this.addProductsForm.unsubscribe_rules)
+      this.formfileData.append("checkin_notice", this.addProductsForm.checkin_notice)
+      this.formfileData.append("customer_notice", this.addProductsForm.customer_notice)
+
+
+
+      if (this.category.length > 0) { 
+        this.formfileData.append("category", this.category[this.category.length - 1]) 
       }
-    },
-    handleSuccess1(response, file, fileList) {
-      console.log(fileList);
-      if (response.status == 0) {
-        this.fileList.push({
-          url: this.baseImage + response.msg,
-        });
-        console.log(this.fileList);
+
+      if (this.isbook == true) { 
+        this.formfileData.append("isbook", 1) 
       } else {
-        this.$message.error(response.msg);
+        this.formfileData.append("isbook", 0) 
       }
+
+      if (this.ready == true) { 
+        this.formfileData.append("ready", 1) 
+      } else { 
+        this.formfileData.append("ready", 0) 
+      } 
+
+      if (this.recommend == true) { 
+        this.formfileData.append("recommend", 1) 
+      } else { 
+        this.formfileData.append("recommend", 0) 
+      }
+      for (var key of this.formfileData.entries()) {
+        console.log(key[0] + ', ' + key[1]);
+    }
+
     },
     //添加民宿，修改民宿
     submitForm(addProductsForm, tableData) {
       let product = {};
-      product = {
-        title: this.addProductsForm.title,
-        content: this.addProductsForm.content,
-        picture: this.addProductsForm.picture,
-        specifications: JSON.stringify(this.tableData),
-      };
-      if (this.category.length > 0) {
-        product.category = this.category[this.category.length - 1];
-      }
-      if (this.isbook == true) {
-        product["isbook"] = 1;
-      } else {
-        product["isbook"] = 0;
-      }
-      if (this.ready == true) {
-        product["ready"] = 1;
-      } else {
-        product["ready"] = 0;
-      }
-      if (this.recommend == true) {
-        product["recommend"] = 1;
-      } else {
-        product["recommend"] = 0;
-      }
-      if (this.shopcard == true) {
-        product["gifttype"] = 1;
-        product["cardtype"] = this.cardtype;
-      } else {
-        product["gifttype"] = 0;
-      }
+      this.submitFileForm()
+      this.getEditData()
+       
       console.log(this.fileList);
       for (var i = 0; i < this.fileList.length; i++) {
         console.log(this.fileList[i].url);
         if (i == 0) {
-          //
-
+          // 
           product.turns = this.fileList[i].url.replace(this.baseImage, "");
         } else {
           product.turns +=
             "," + this.fileList[i].url.replace(this.baseImage, "");
         }
-      }
-      console.log(product.turns);
-
-      if (this.uuid) {
-        product.method = "put";
-        product.uuid = this.uuid;
+      } 
+      if (this.uuid) { 
+        this.formfileData.append("method", "put") 
+        this.formfileData.append("uuid", this.uuid) 
+        
         if (product.turns == null) {
           delete product.turns;
         }
@@ -365,18 +499,12 @@ export default {
             this.$message.error(data.msg);
           }
         });
-      } else {
+      } 
+      else {
         if (product.turns == null) {
           delete product.turns;
-        }
-        //delete product.specifications
-        if (
-          product.specifications == null ||
-          product.specifications.length === 0
-        ) {
-          delete product.specifications;
-        }
-        addProducts(product).then(({ data }) => {
+        }  
+        addHomeStayProducts(this.formfileData).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
             this.addProductsForm = {};
@@ -447,6 +575,14 @@ export default {
   width: 100%;
   border-bottom: 5px solid #d81e06;
   margin-bottom: 10px;
+}
+
+.detail{
+   width: 300px;
+}
+
+.rules{
+   flex:auto;
 }
 .cardtype {
   margin-top: 10px;

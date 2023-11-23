@@ -101,6 +101,7 @@
         accept="turns/jpeg, turns/gif, turns/png"
         action="prx/api/appfile/appfile/"
         :headers="headers"
+        ref="piclist"
         list-type="picture-card"
         :on-preview="handlePictureCardPreview"
         :on-remove="handleRemove"
@@ -122,6 +123,7 @@
       <div class="btn">
         <el-button @click="cancel">取消</el-button>
         <el-button type="primary" @click="submitForm('addProductsForm','tableData')">{{uuid?'修改':'发布'}}</el-button>
+        <el-button type="primary" @click="nextStep">下一步</el-button>
       </div>
     </el-form>
   </div>
@@ -206,6 +208,10 @@ export default {
     this.getCategoryList()
   },
   methods: {
+    nextStep(){
+      //下一步
+      this.$refs.piclist.submit()
+    },
     //添加行
     addRow() {
       var list = {

@@ -19,6 +19,7 @@ const AXIOS = axios.create({
   baseURL,
   timeout: 0,
   transformRequest: [data => {
+    if(data instanceof FormData) return data
     return qs.stringify(data)
   }]
 })
