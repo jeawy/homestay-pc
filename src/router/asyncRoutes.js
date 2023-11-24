@@ -110,6 +110,15 @@ export default function asyncRoutes(params) {
       },
       children: [
         {
+          path: "product-rooms",
+          name: "product-rooms",
+          component: () => import("@/views/product-manage/rooms"),
+          meta: {
+            title: "民宿",
+            icon: "gift"
+          }
+        },
+        {
           path: "product-manage",
           name: "product-manage",
           component: () => import("@/views/product-manage"),

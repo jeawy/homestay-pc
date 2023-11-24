@@ -3451,10 +3451,7 @@
       append$1(subject, children);
       definition.value.each(function (value) {
         set$4(subject, value);
-      });
-      if (!definition.uid) {
-        debugger;
-      }
+      }); 
       writeOnly(subject, definition.uid);
       return subject;
     };

@@ -148,16 +148,16 @@
               ></el-input>
             </el-form-item>
             <div class="pricetype">
-              <el-radio v-model="addProductsForm.pricemode" class="cardtype" :label="0"
+              <el-radio v-model="pricemode" class="cardtype" :label="0"
                 >仅覆盖日历上未设定价格的日期</el-radio
               >
-              <el-radio v-model="addProductsForm.pricemode" class="cardtype" :label="1"
+              <el-radio v-model="pricemode" class="cardtype" :label="1"
                 >覆盖日历所有价格</el-radio
               >
             </div>
           </div>
           
-          <Calendar></Calendar>
+          <Calendar :mini="false" :productuuid="uuid"></Calendar>
         </div>
       </div>
      
@@ -243,7 +243,7 @@ export default {
         day: "MM-dd",
       },
       categoriesList: [], //类别
-      baseImage: process.env.VUE_APP_BASE_IMAGE + "/",
+      baseImage: process.env.VUE_APP_BASE_IMAGE + "/images/",
       isbook: false, //是否为预约民宿
       ready: false, // 立即上架
       recommend: false, //是否设为推荐民宿 
@@ -267,9 +267,11 @@ export default {
       dialogImageUrl: "",
       dialogVisible: false,
       dialogShow1: false,
+      pricemode:0,
       addProductsForm: {
         category: null,
         title: null,
+        address:"",
         picture: null,
         turns: null,
         content: null,
@@ -277,9 +279,8 @@ export default {
         weekday_price:null,
         holiday_price:null,
 
-        pricemode:0,
-        area:null,
-        address:null,
+        
+        area:null, 
         longitude:null,
         latitude:null,
  
@@ -319,6 +320,11 @@ export default {
   name: "extra-audit",
   //判断能否添加规格
   created() {
+    if (this.$route.query.uuid) { 
+      this.uuid = this.$route.query.uuid; 
+      this.getviewProducts();
+    } else {
+    }
     this.getCategoryList(); 
     this.formfileData = new FormData()
   },
@@ -349,9 +355,7 @@ export default {
       console.log(param.file) 
       this.formfileData.append("mainpic", param.file) 
     },
-    handleRemove(file, fileList) {
-      console.log(fileList);
-      console.log(file);
+    handleRemove(file, fileList) { 
       this.fileList = [];
       for (var i = 0; i < fileList.length; i++) {
         this.fileList.push({
@@ -365,13 +369,16 @@ export default {
       }).then((res) => {
         if (res.data.status == 0) {
           this.addProductsForm = res.data.msg;
-          console.log(res.data.msg);
+          
           this.fileList = [];
           for (var i = 0; i < res.data.msg.turns.length; i++) {
             this.fileList.push({
               url: this.baseImage + res.data.msg.turns[i],
             });
           }
+          this.pricemode = 0
+          this.preMainPic = this.baseImage + this.addProductsForm.picture
+          this.priVideoPath = this.baseImage + this.addProductsForm.videopath
           this.category = res.data.msg.categoryid;
           this.isbook = res.data.msg.isbook == 0 ? false : true; 
           this.ready = res.data.msg.ready == 0 ? false : true;
@@ -407,7 +414,7 @@ export default {
       this.formfileData.append("workday_price", this.addProductsForm.workday_price)
       this.formfileData.append("weekday_price", this.addProductsForm.weekday_price) 
       this.formfileData.append("holiday_price", this.addProductsForm.holiday_price)
-      this.formfileData.append("pricemode", this.addProductsForm.pricemode) 
+      this.formfileData.append("pricemode", this.pricemode) 
       this.formfileData.append("area", this.addProductsForm.area)
 
 
@@ -470,24 +477,8 @@ export default {
       if (this.uuid) { 
         this.formfileData.append("method", "put") 
         this.formfileData.append("uuid", this.uuid) 
-        
-        if (product.turns == null) {
-          delete product.turns;
-        }
-        if (product.title == null) {
-          delete product.title;
-        }
-        if (product.category == null) {
-          delete product.category;
-        }
-        if (product.content == "") {
-          delete product.content;
-        }
-        if (product.picture == null) {
-          delete product.picture;
-        }
-
-        alterProduct(product).then(({ data }) => {
+         
+        addHomeStayProducts(this.formfileData).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
             this.addProductsForm = {};
@@ -559,12 +550,7 @@ export default {
       });
     },
   },
-  mounted() {
-    if (this.$route.query.uuid) {
-      this.uuid = this.$route.query.uuid;
-      this.getviewProducts();
-    } else {
-    }
+  mounted() { 
     this.getProductsClass();
   },
 };

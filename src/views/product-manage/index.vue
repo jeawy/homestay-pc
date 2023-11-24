@@ -232,6 +232,14 @@ export default {
     }
   },
   methods: {
+    resetParams(){
+      this.queryForm={
+        selling:"1",
+        producttype:1, // 只查询民宿产品
+      }
+      this.currentPage = 1
+      this.handleQueryList()
+    },
     getCategories(){
             getCategory({pc:""}).then(({data})=>{
               

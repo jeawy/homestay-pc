@@ -81,8 +81,7 @@ export default {
     }
   },
   watch: {
-    value(val) {
-      debugger
+    value(val) { 
       if(!this.hasInit) return
       if (!this.hasChange && val) {
         window.tinymce.get(this.tinymceId).setContent(val)
