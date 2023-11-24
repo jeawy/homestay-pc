@@ -64,6 +64,14 @@
         </div>
         <Calendar :productuuid="item.uuid"></Calendar>
         <div class="actions">
+          <el-tooltip effect="dark" content="图片库" placement="top">
+            <el-link
+              :underline="false"
+              icon="el-icon-picture-outline"
+              type="primary"
+              @click="modify(item.uuid, true)"
+            />
+          </el-tooltip>
           <el-tooltip effect="dark" content="详情" placement="top">
             <el-link
               :underline="false"
@@ -221,13 +229,23 @@ export default {
         name: "add-room",
       });
     },
-    modify(uuid) {
-      this.$router.push({
-        name: "add-room",
-        query: {
-          uuid: uuid,
-        },
-      });
+    modify(uuid, pic=false) {
+      if (pic){
+        this.$router.push({
+          name: "add-room-pic",
+          query: {
+            uuid: uuid,
+          },
+        });
+      }
+      else{
+        this.$router.push({
+          name: "add-room",
+          query: {
+            uuid: uuid,
+          },
+        }); 
+      } 
     },
     getviewProducts() {
       this.isLoading = true;

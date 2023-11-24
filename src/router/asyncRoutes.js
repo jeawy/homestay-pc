@@ -137,6 +137,16 @@ export default function asyncRoutes(params) {
           }
         },
         {
+          path: "add-room-pic",
+          name: "add-room-pic",
+          hidden: true,
+          component: () => import("@/views/product-manage/addroompic"),
+          meta: {
+            title: "添加民宿图片",
+            icon: "gift"
+          }
+        },
+        {
           path: "add-product",
           name: "add-product",
           component: () => import("@/views/product-manage/add"),

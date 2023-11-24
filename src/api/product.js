@@ -24,8 +24,7 @@ export function uploadAttachment(data) {
       }
     })
   } 
-
-
+ 
   export function addProducts(data) {
     return AXIOS.post('/product/product/', data)
   }  
@@ -55,3 +54,15 @@ export function getCalendarApi(params) {
 export function queryDetail(params){
   return AXIOS.get('/product/anonymous/',{params})
 }
+
+export function updateProductImg(data) {
+  return AXIOS.post('/product/img/', data, {
+    headers: {
+        'Content-Type': 'multipart/form-data;charset=UTF-8',
+    }
+  })
+}  
+
+export function getProductImg(params) {
+  return AXIOS.get('/product/img/', {params})
+} 
