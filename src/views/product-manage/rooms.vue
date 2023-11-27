@@ -410,7 +410,7 @@ export default {
 }
 .item {
   flex: auto;
-  max-width: 400px;
+  max-width: 380px;
   border: 1px solid #bfbfbf;
   padding: 15px;
   

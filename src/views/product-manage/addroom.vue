@@ -123,6 +123,48 @@
               >设为推荐民宿</el-checkbox
             >
           </div>
+          <div style="display: flex">
+            <el-form-item label="户型:" label-width="45px" prop="housetype">
+              <el-input v-model="addProductsForm.housetype" maxlength="10" placeholder="两室一厅" style="width: 120px;"></el-input>
+            </el-form-item>
+            <el-form-item label="最多入住人数" label-width="110px" prop="maxlivers">
+              <el-input v-model="addProductsForm.maxlivers" style="width: 100px;" min="1" type="number"></el-input>
+            </el-form-item>
+            <el-form-item label="房屋特色" prop="lighlight">
+              <el-input v-model="addProductsForm.lighlight" maxlength="50" style="width: 250px;"></el-input>
+            </el-form-item> 
+          </div>
+          
+          <el-tag
+            v-for="tag in history_tags"
+            :key="tag.name" 
+            @click="fastAddtag(tag)"
+            :type="tag.id">
+            {{tag.name}}
+          </el-tag>
+          <div style="display: flex">
+            <el-form-item label="房屋标签:" label-width="80px" prop="newtag"> 
+              <el-tag
+                :key="index"
+                v-for="(tag, index) in  newtags"
+                closable
+                :disable-transitions="false"
+                @close="handleCloseTag(index)">
+                {{tag}}
+              </el-tag>
+              <el-input
+                class="input-new-tag"
+                v-if="inputVisible"
+                v-model="newtag"
+                ref="saveTagInput"
+                size="small"
+                @keyup.enter.native="handleInputConfirm"
+                @blur="handleInputConfirm"
+              >
+              </el-input>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 新标签</el-button>
+            </el-form-item> 
+          </div>
           <div class="title">房价设置:</div>
           <p style="color:#bfbfbf">提示:只设置最近6个月工作日、周末及节假日的房价</p>
           <div style="display: flex">
@@ -205,8 +247,7 @@
           type="primary"
           @click="submitForm('addProductsForm', 'tableData')"
           >{{ uuid ? "修改" : "发布" }}</el-button
-        >
-        <el-button type="primary" @click="nextStep">下一步</el-button>
+        > 
       </div>
     </el-form>
     <BackToTop></BackToTop>
@@ -223,6 +264,7 @@ import {
   alterProduct,
 } from "@/api/product";
 import { getCategory } from "@/api/category";
+import { getTagsApi } from "@/api/tags";
 import { getToken } from "@/utils/auth";
 import tinymce from "@/components/Tinymce";
 import BackToTop from "@/components/BackToTop";
@@ -232,6 +274,9 @@ export default {
   name: "alter-gifts",
   data() {
     return {
+      newtag:"",
+      newtags:[],
+      history_tags:[],
       cardtype: 0, //默认是电子卡
       uuid: "",
       fileList: [],
@@ -278,8 +323,7 @@ export default {
         workday_price:null,
         weekday_price:null,
         holiday_price:null,
-
-        
+ 
         area:null, 
         longitude:null,
         latitude:null,
@@ -290,10 +334,15 @@ export default {
         unsubscribe_rules:"",
         checkin_notice:"",
         customer_notice:"", 
- 
+
+        lighlight:"",
+        housetype:"",
+        maxlivers:4,  
+        tags:""
       },
       preMainPic:"",
       priVideoPath:"",
+      inputVisible:false,
       rules: {
         spec_number: [
           {
@@ -320,6 +369,7 @@ export default {
   name: "extra-audit",
   //判断能否添加规格
   created() {
+    this.getTags()
     if (this.$route.query.uuid) { 
       this.uuid = this.$route.query.uuid; 
       this.getviewProducts();
@@ -327,11 +377,32 @@ export default {
     }
     this.getCategoryList(); 
     this.formfileData = new FormData()
+    
   },
+
   methods: {
-    nextStep(){
-      //下一步 
+    fastAddtag(tag){
+      if (!( this.newtags.includes(tag.name))){
+          this.newtags.push(tag.name)
+      }
     },
+    showInput() {
+        this.inputVisible = true;
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus();
+        });
+      },
+    handleInputConfirm() {
+        let inputValue = this.newtag;
+        if (inputValue) {
+          this.newtags.push(inputValue);
+        }
+        this.inputVisible = false;
+        this.newtag = '';
+      },
+    handleCloseTag(index){
+      this.newtags.splice(index, 1)
+    }, 
     submitFileForm(){
       this.$refs.upload.submit()
       this.$refs.uploadvideo.submit()
@@ -364,6 +435,7 @@ export default {
       }
     }, 
     getviewProducts() {
+      this.newtags = []
       viewProducts({
         uuid: this.uuid,
       }).then((res) => {
@@ -385,6 +457,9 @@ export default {
           this.recommend = res.data.msg.recommend == 0 ? false : true;
           this.SRC = this.addProductsForm.picture;
           this.tableData = this.addProductsForm.specifications;
+          res.data.msg.tags.forEach((e)=>{
+            this.newtags.push(e.name)
+          })
         } else {
           this.$notify({
             type: "error",
@@ -428,9 +503,22 @@ export default {
       this.formfileData.append("unsubscribe_rules", this.addProductsForm.unsubscribe_rules)
       this.formfileData.append("checkin_notice", this.addProductsForm.checkin_notice)
       this.formfileData.append("customer_notice", this.addProductsForm.customer_notice)
+      
+      this.formfileData.append("maxlivers", this.addProductsForm.maxlivers)
+      this.formfileData.append("lighlight", this.addProductsForm.lighlight)
+      this.formfileData.append("housetype", this.addProductsForm.housetype)
+      
+      let tags = ""
+      if (this.newtags.length > 0){
+        this.newtags.forEach((e)=>{
+          tags += e +","
+        })
+      }
 
+      console.log(tags)
+      this.formfileData.append("tags", tags)
 
-
+ 
       if (this.category.length > 0) { 
         this.formfileData.append("category", this.category[this.category.length - 1]) 
       }
@@ -549,6 +637,14 @@ export default {
         }
       });
     },
+    getTags(){
+      let param = {
+        label:"product"
+      }
+      getTagsApi(param).then(({data:{status, msg}})=>{ 
+         this.history_tags = msg
+      })
+    }
   },
   mounted() { 
     this.getProductsClass();
