@@ -38,8 +38,7 @@
             </el-button>
           </el-button-group>
         </el-form-item>
-      </el-form>
-      <el-form inline>
+       
         <el-form-item>
           <el-button-group>
             <el-button type="primary" icon="el-icon-plus" @click="handleAdd">
@@ -59,8 +58,8 @@
           />
         </div>
         <div class="info">
-          <p>{{ item.title }}</p>
-          <p>{{ item.address }}</p>
+          <div>{{ item.title }}</div>
+          <div>{{ item.address }}</div>
         </div>
         <Calendar :productuuid="item.uuid"></Calendar>
         <div class="actions">
@@ -471,5 +470,6 @@ p {
 .vpage{
   width: 100%;
   text-align: center;
+  margin-top: 10px;
 }
 </style>

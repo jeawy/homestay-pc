@@ -2,7 +2,7 @@
   <div id="activityInfo">
     <!-- 类别列表 -->
     <el-row class="row-lg">
-      <el-col :span="2">
+      <el-col :span="3">
         <el-button
           type="danger"
           icon="el-icon-delete"
@@ -11,7 +11,7 @@
           >批量删除</el-button
         >
       </el-col>
-      <el-col :span="2">
+      <el-col :span="3">
         <el-button type="primary" icon="el-icon-plus" @click="openTopDialog"
           >添加类别</el-button
         >
@@ -42,7 +42,7 @@
         label="序号"
         align="center"
       ></el-table-column>
-      <el-table-column label="类别图片" align="center">
+      <el-table-column label="类别图片" align="center"  width="200" >
         <template slot-scope="scope">
           <el-image
             :src="baseurl + scope.row.icon"
@@ -76,7 +76,14 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column :key="20" width="100" label="是否显示" align="center">
+      <el-table-column label="归属" align="center"  width="80" >
+        <template slot-scope="scope">
+          <div slot="placeholder" class="image-slot">
+            <span class="dot">{{ scope.row.categorytype |  categorytypetxt}}</span>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column :key="20"  label="是否显示" align="center" width="80" >
         <template slot-scope="{ row, $index }">
           <el-switch
             :value="row.visible"
@@ -88,7 +95,7 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column :key="18" label="操作" align="center">
+      <el-table-column :key="18" label="操作" width="300" align="center">
         <template slot-scope="scope">
           <el-button
             type="primary"
@@ -96,12 +103,12 @@
             icon="el-icon-edit"
             >编辑</el-button
           >
-          <el-tooltip effect="dark" content="删除类别" placement="top">
+          <el-tooltip effect="dark" content="删除" placement="top">
             <el-button
               class="el-icon-delete"
               type="danger"
               @click="deleteAct(scope.row.id)"
-              >删除类别</el-button
+              >删除</el-button
             >
           </el-tooltip>
           <el-tooltip effect="dark" content="增加子类别" placement="top">
@@ -144,6 +151,11 @@
             :inactive-value="0"
           >
           </el-switch>
+        </el-form-item>
+
+        <el-form-item label="分类归属" prop="name">
+          <el-radio v-model="actForm.categorytype" class="cardtype"   :label="0">民宿</el-radio>
+          <el-radio v-model="actForm.categorytype"  class="cardtype"  :label="1">其他</el-radio>
         </el-form-item>
 
         <el-form-item label="类别图片">
@@ -200,7 +212,8 @@ export default {
       actForm: {
         name: null,
         icon: "",
-        visible: 1
+        visible: 1,
+        categorytype:0
       },
       SRC: "",
       headers: {
@@ -358,6 +371,18 @@ export default {
       } else {
         this.$message.error(response.msg);
       }
+    }
+  },
+  filters:{
+    categorytypetxt(status){
+      if (status == 0)
+      {
+        return "民宿"
+      }
+      else if (status == 1)
+      {
+        return "其他"
+      } 
     }
   },
   created() {

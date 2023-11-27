@@ -15,110 +15,19 @@
       </div>
     </div>
     <div class="mycalendar">
-      <div
-        class="item"
-        v-for="([key, value], index) of Object.entries(days)"
-        :key="index"
-      >
-        <div v-if="key == 0" class="line">
-          <div class="dayheader" :style="{'height':height +'px', 'line-height':height +'px'}" >周一</div>
-          <div
-            class="day" :style="{'height':height +'px', 'padding-top':paddingtop+'px'}"
-            @click="openDialog(day)"
-            :class="day.lastmonth == 1 ? 'lastday' : ''"
-            v-for="(day, dayindex) in value"
-            :key="dayindex"
-          >
-            <div class="holidayname" v-if="day.holiday">{{ day.holiday }}</div>
-            <div class="dayvalue">{{ day.day | dateDayFormat }}</div>
-            <div class="price" v-if="day.price">￥{{ day.price }}</div>
-          </div>
-        </div>
-        <div v-if="key == 1" class="line">
-          <div class="dayheader" :style="{'height':height +'px', 'line-height':height +'px'}" >周二</div>
-          <div
-            class="day" :style="{'height':height +'px', 'padding-top':paddingtop+'px'}"
-            @click="openDialog(day)"
-            :class="day.lastmonth == 1 ? 'lastday' : ''"
-            v-for="(day, dayindex) in value"
-            :key="dayindex"
-          >
-            <div class="holidayname" v-if="day.holiday">{{ day.holiday }}</div>
-            <div class="dayvalue">{{ day.day | dateDayFormat }}</div>
-            <div class="price" v-if="day.price">￥{{ day.price }}</div>
-          </div>
-        </div>
-        <div v-if="key == 2" class="line">
-          <div class="dayheader" :style="{'height':height +'px', 'line-height':height +'px'}" >周三</div>
-          <div
-            class="day" :style="{'height':height +'px', 'padding-top':paddingtop+'px'}"
-            @click="openDialog(day)"
-            :class="day.lastmonth == 1 ? 'lastday' : ''"
-            v-for="(day, dayindex) in value"
-            :key="dayindex"
-          >
-            <div class="holidayname" v-if="day.holiday">{{ day.holiday }}</div>
-            <div class="dayvalue">{{ day.day | dateDayFormat }}</div>
-            <div class="price" v-if="day.price">￥{{ day.price }}</div>
-          </div>
-        </div>
-        <div v-if="key == 3" class="line">
-          <div class="dayheader" :style="{'height':height +'px', 'line-height':height +'px'}" >周四</div>
-          <div
-            class="day" :style="{'height':height +'px', 'padding-top':paddingtop+'px'}" 
-            @click="openDialog(day)"
-            :class="day.lastmonth == 1 ? 'lastday' : ''"
-            v-for="(day, dayindex) in value"
-            :key="dayindex"
-          >
-            <div class="holidayname" v-if="day.holiday">{{ day.holiday }}</div>
-            <div class="dayvalue">{{ day.day | dateDayFormat }}</div>
-            <div class="price" v-if="day.price">￥{{ day.price }}</div>
-          </div>
-        </div>
-        <div v-if="key == 4" class="line">
-          <div class="dayheader" :style="{'height':height +'px', 'line-height':height +'px'}" >周五</div>
-          <div
-            class="day" :style="{'height':height +'px', 'padding-top':paddingtop+'px'}"
-            @click="openDialog(day)"
-            :class="day.lastmonth == 1 ? 'lastday' : ''"
-            v-for="(day, dayindex) in value"
-            :key="dayindex"
-          >
-            <div class="holidayname" v-if="day.holiday">{{ day.holiday }}</div>
-            <div class="dayvalue">{{ day.day | dateDayFormat }}</div>
-            <div class="price" v-if="day.price">￥{{ day.price }}</div>
-          </div>
-        </div>
-        <div v-if="key == 5" class="line">
-          <div class="dayheader" :style="{'height':height +'px', 'line-height':height +'px'}" >周六</div>
-          <div
-            class="day" :style="{'height':height +'px', 'padding-top':paddingtop+'px'}"
-            @click="openDialog(day)"
-            :class="day.lastmonth == 1 ? 'lastday' : ''"
-            v-for="(day, dayindex) in value"
-            :key="dayindex"
-          >
-            <div class="holidayname" v-if="day.holiday">{{ day.holiday }}</div>
-            <div class="dayvalue">{{ day.day | dateDayFormat }}</div>
-            <div class="price" v-if="day.price">￥{{ day.price }}</div>
-          </div>
-        </div>
-        <div v-if="key == 6" class="line">
-          <div class="dayheader" :style="{'height':height +'px', 'line-height':height +'px'}" >周日</div>
-          <div
-            class="day" :style="{'height':height +'px', 'padding-top':paddingtop+'px'}"
-            @click="openDialog(day)"
-            :class="day.lastmonth == 1 ? 'lastday' : ''"
-            v-for="(day, dayindex) in value"
-            :key="dayindex"
-          >
-            <div class="holidayname" v-if="day.holiday">{{ day.holiday }}</div>
-            <div class="dayvalue">{{ day.day | dateDayFormat }}</div>
-            <div class="price" v-if="day.price">￥{{ day.price }}</div>
-          </div>
+      <div class="line2">
+        <div class="lineitem" :style="{'height':height +'px', 'line-height':height +'px'}" v-for="(item, index) in weekdays" :key="index">
+          <div class="weekend" v-if="item.weekend == 1">{{ item.name }}</div>
+          <div class="workday" v-else>{{ item.name }}</div>
         </div>
       </div>
+      <div class="months"> 
+          <div    class="day" :style="{'height':height +'px' }" :class="[dayitem.lastmonth==1?'lastmonth':'']" v-for="(dayitem, dayindex) in  days" :key="dayindex" @click="openDialog(dayitem)"  > 
+              <div  class="daytxt"   >{{ dayitem.day |dateDayFormat  }}</div >   
+              <div  class="holiday" v-if="dayitem.holiday" >{{ dayitem.holiday  }}</div >   
+              <div  class="holiday" v-if="dayitem.price" >￥{{ dayitem.price  }}</div > 
+          </div> 
+      </div> 
     </div>
     <el-dialog :visible.sync="showEditDialog" width="30%" title="编辑房价" >
        <div class="dialogprice">
@@ -150,6 +59,36 @@ export default {
   data() {
     return {
       showEditDialog:false,
+      weekdays: [ 
+        {
+          name: "一",
+          weekend: 0,
+        },
+        {
+          name: "二",
+          weekend: 0,
+        },
+        {
+          name: "三",
+          weekend: 0,
+        },
+        {
+          name: "四",
+          weekend: 0,
+        },
+        {
+          name: "五",
+          weekend: 0,
+        },
+        {
+          name: "六",
+          weekend: 1,
+        },
+        {
+          name: "日",
+          weekend: 1,
+        },
+      ],
       days: {},
       year: new Date().getFullYear(),
       month: new Date().getMonth() +1,
@@ -205,12 +144,11 @@ export default {
       let param = {
         year: this.year,
         month: this.month,
-      };
-      console.log(this.productuuid)
+      }; 
       if (this.productuuid) {
         param.productuuid = this.productuuid;
       }
-      getCalendarApi(param).then(({ data: { status, msg } }) => { 
+      getCalendarApi(param).then(({ data: { status, msg } }) => {  
         this.days = msg;
       });
     },
@@ -238,7 +176,44 @@ export default {
 </script>
 
 <style   scoped>
-.mycalendar,
+.line2 {
+  display: flex;
+  width:100%;
+   
+  border-top: 1px solid #d8dce0;
+  border-bottom: 1px solid #d8dce0; 
+  background-color: white; 
+}
+
+.holiday{
+  color:#fea037;
+  font-weight: bold;
+  font-size:12px;
+}
+.months{
+  display: flex;
+  flex-wrap: wrap;
+}
+.day
+{
+  width:14.28%;
+  height: 80px;
+}
+.lineitem { 
+    width:14.28%;
+    text-align: center; 
+    font-weight: 700;
+    height: 80px;
+    line-height: 80px;
+  }
+  .weekend {
+    color: #fea037;
+    text-align: center;  
+  }
+ .lastmonth{
+  background-color: #f6f8ea;
+ }
+ 
 .header {
   display: flex;
   text-align: center;
