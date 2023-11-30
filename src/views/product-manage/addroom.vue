@@ -139,7 +139,7 @@
             v-for="tag in history_tags"
             :key="tag.name" 
             @click="fastAddtag(tag)"
-            :type="tag.id">
+            type="success">
             {{tag.name}}
           </el-tag>
           <div style="display: flex">
@@ -208,39 +208,23 @@
       </el-dialog>
       <div style="display: flex">
         <tinymce v-model="addProductsForm.content"  style="width: 450px;" />
-        <div class="video">
-          <el-upload
-            accept="turns/jpeg, turns/gif, turns/png"
-            action=""
-            ref="uploadfiles"
-            :headers="headers"
-            list-type="picture-card" 
-            :on-remove="handleRemove"
-            :http-request="handlFileList"  
-            :limit="9"
-            :auto-upload="false"
-            :file-list="fileList"
-          >
-            <i class="el-icon-plus"></i>
-          </el-upload>
-
+        <div class="video"> 
+          <div style="margin-left: 20px;  width:500px">
+            <div class="rules">
+              <div>退订规则</div>
+              <el-input v-model="addProductsForm.unsubscribe_rules"  type="textarea" :rows="5" placeholder="退订规则"></el-input> 
+            </div>
+            <div class="rules">
+              <div>入住须知</div>
+              <el-input v-model="addProductsForm.checkin_notice"  type="textarea" :rows="5" placeholder="入住须知"></el-input> 
+            </div>
+            <div class="rules" >
+              <div>对客要求</div>
+              <el-input v-model="addProductsForm.customer_notice" type="textarea" :rows="5" placeholder="对客要求"></el-input> 
+            </div>
         </div>
-      </div>
-      <div style="display: flex; width:100%">
-        <div class="rules">
-          <div>退订规则</div>
-          <el-input v-model="addProductsForm.unsubscribe_rules"  type="textarea" :rows="5" placeholder="退订规则"></el-input> 
         </div>
-        <div class="rules">
-          <div>入住须知</div>
-          <el-input v-model="addProductsForm.checkin_notice"  type="textarea" :rows="5" placeholder="入住须知"></el-input> 
-        </div>
-        <div class="rules" >
-          <div>对客要求</div>
-          <el-input v-model="addProductsForm.customer_notice" type="textarea" :rows="5" placeholder="对客要求"></el-input> 
-        </div>
-      </div>
-      
+      </div> 
       <div class="btn">
         <el-button @click="cancel">取消</el-button>
         <el-button
@@ -405,8 +389,7 @@ export default {
     }, 
     submitFileForm(){
       this.$refs.upload.submit()
-      this.$refs.uploadvideo.submit()
-      this.$refs.uploadfiles.submit() 
+      this.$refs.uploadvideo.submit() 
     },
     handleAvatarSuccessMainVideo(file){
       this.priVideoPath = URL.createObjectURL(file.raw);
