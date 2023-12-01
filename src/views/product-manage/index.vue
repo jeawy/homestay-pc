@@ -60,7 +60,7 @@
       row-class-name="hover" 
     >
         
-      <el-table-column     label="商品">
+      <el-table-column width="160"    label="商品">
         <template slot-scope="{ row }">
           <div class="name-wrap" style=" text-align:center"> 
             <el-image
@@ -212,7 +212,8 @@ export default {
       SRC: "", 
       total:100,
       queryForm:{
-        selling:"1"
+        selling:"1",
+        producttype:1,
       },
       categories:[],
       currentPage: 1,
@@ -235,22 +236,22 @@ export default {
     resetParams(){
       this.queryForm={
         selling:"1",
-        producttype:1, // 只查询民宿产品
+        producttype:1, // 只查询民宿以外产品
       }
       this.currentPage = 1
       this.handleQueryList()
     },
     getCategories(){
-            getCategory({pc:""}).then(({data})=>{
-              
-                if(data.status == 0){
-                    this.categories = data.msg
-                    console.log(data.msg)
-                }else{
-                    return false;
-                }
-            })
-        }, 
+      getCategory({pc:""}).then(({data})=>{
+        
+          if(data.status == 0){
+              this.categories = data.msg
+              console.log(data.msg)
+          }else{
+              return false;
+          }
+      })
+    }, 
     handleQueryList(){ 
       console.log(1111)
        this.currentPage = 1
@@ -284,13 +285,7 @@ export default {
         this.queryForm.selling_prodcut = 1;
       } else {
         this.queryForm.selling_prodcut  = 0;
-      }
-      if (this.queryForm.unready) {
-        this.queryForm.unready_prodcut  = 1;
-      } else {
-        this.queryForm.unready_prodcut  = 0;
-      }
-
+      } 
       if (this.queryForm.recommend) {
         this.queryForm.recommend_prodcut  = 1;
       } else {
@@ -305,8 +300,8 @@ export default {
 
       viewProducts({...this.queryForm,
       page:this.currentPage, pagenum:this.paginationsize}).then(({ data }) => { 
-        this.giftList = [...data.msg];
-        this.total = this.giftList.length
+        this.giftList = [...data.msg.list];
+        this.total = this.giftList.total
       });
     },
     getProductsClass() {

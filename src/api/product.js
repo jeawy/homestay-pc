@@ -26,11 +26,19 @@ export function uploadAttachment(data) {
   } 
  
   export function addProducts(data) {
-    return AXIOS.post('/product/product/', data)
+    return AXIOS.post('/product/product/', data, {
+      headers: {
+          'Content-Type': 'multipart/form-data;charset=UTF-8',
+      }
+    })
   }  
   //修改商品
   export function alterProduct(data) {
-    return AXIOS.post('/product/product/', data )
+    return AXIOS.post('/product/product/', data, {
+      headers: {
+          'Content-Type': 'multipart/form-data;charset=UTF-8',
+      }
+    } )
   }
   //删除商品
 export function deleteProduct(data) {

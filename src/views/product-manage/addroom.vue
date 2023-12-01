@@ -244,8 +244,7 @@ import {
   addHomeStayProducts,
   viewProductsClass,
   viewProductsSpecs,
-  addProductSpecs,
-  alterProduct,
+  addProductSpecs, 
 } from "@/api/product";
 import { getCategory } from "@/api/category";
 import { getTagsApi } from "@/api/tags";
@@ -335,8 +334,7 @@ export default {
             trigger: "change",
           },
         ],
-      },
-      SRC: "",
+      }, 
       SRC1: "",
       headers: {
         Authorization: `JWT ${getToken()}`,
@@ -437,8 +435,7 @@ export default {
           this.category = res.data.msg.categoryid;
           this.isbook = res.data.msg.isbook == 0 ? false : true; 
           this.ready = res.data.msg.ready == 0 ? false : true;
-          this.recommend = res.data.msg.recommend == 0 ? false : true;
-          this.SRC = this.addProductsForm.picture;
+          this.recommend = res.data.msg.recommend == 0 ? false : true; 
           this.tableData = this.addProductsForm.specifications;
           res.data.msg.tags.forEach((e)=>{
             this.newtags.push(e.name)
@@ -524,9 +521,8 @@ export default {
         this.formfileData.append("recommend", 0) 
       }
       for (var key of this.formfileData.entries()) {
-        console.log(key[0] + ', ' + key[1]);
-    }
-
+          console.log(key[0] + ', ' + key[1]);
+      } 
     },
     //添加民宿，修改民宿
     submitForm(addProductsForm, tableData) {
@@ -552,8 +548,7 @@ export default {
         addHomeStayProducts(this.formfileData).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.addProductsForm = {};
-            this.SRC = "";
+            this.addProductsForm = {}; 
             this.addProductsForm.content = "";
             this.tableData = [];
             this.getviewProducts();
@@ -569,8 +564,7 @@ export default {
         addHomeStayProducts(this.formfileData).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.addProductsForm = {};
-            this.SRC = "";
+            this.addProductsForm = {}; 
             this.addProductsForm.content = "";
             this.tableData = [];
             this.$router.push({
@@ -583,8 +577,7 @@ export default {
       }
     },
     cancel() {
-      this.addProductsForm = [];
-      this.SRC = "";
+      this.addProductsForm = []; 
       this.addProductsForm.content = "";
       this.tableData = [];
     },

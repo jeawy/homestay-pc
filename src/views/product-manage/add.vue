@@ -8,19 +8,44 @@
             accept="picture/jpeg, picture/gif, picture/png"
             ref="upload"
             class="upload-demo"
-            action="prx/api/appfile/appfile/"
-            :headers="headers"
-            :on-success="handleSuccess"
+            :headers="headers" 
+            action=""
+            :http-request="HandleMainImg" 
+            :auto-upload="false"
             drag
-            :show-file-list="false"
+            :show-file-list="false" 
+            :on-change="handleAvatarSuccessMainPic"
           >
-            <el-image v-if="SRC" style="width: 100%; height: 100%" :src="baseImage+SRC">
+            <el-image v-if="preMainPic" style="width: 100%; height: 100%" :src="preMainPic">
 
             </el-image>
             <template v-else  >
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
                 商品缩略图，或
+                <em>点击上传</em>
+              </div>
+            </template>
+          </el-upload>
+          <el-upload
+            accept=".mp4"
+            ref="uploadvideo"
+            class="upload-demo" 
+            :headers="headers"
+            action=""
+            :auto-upload="false"
+            :http-request="HandleVideo" 
+            drag
+            :show-file-list="false"
+            :on-change="handleAvatarSuccessMainVideo"
+          >
+          <video width="100%" height="100%" :src="priVideoPath"   controls v-if="priVideoPath">
+            
+          </video>
+            <template v-else>
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">
+                民宿封面视频，或
                 <em>点击上传</em>
               </div>
             </template>
@@ -32,20 +57,47 @@
                 
               :options ="options"
               :props="{checkStrictly: true }"
-              >
-            
+              > 
             </el-cascader> 
             <el-form-item label="商品标题" prop="title">
               <el-input v-model="addProductsForm.title"></el-input>
-            </el-form-item> 
-             
+            </el-form-item>  
             <el-checkbox v-model="isbook"  class="book">预约商品</el-checkbox> 
             <el-checkbox v-model="ready"  class="book">立即上架</el-checkbox> 
             <el-checkbox v-model="recommend"  class="book">设为推荐商品</el-checkbox>
             <el-checkbox v-model="shopcard"  class="book">购物卡</el-checkbox>
             <el-radio v-model="cardtype" class="cardtype" v-if="shopcard" :label="0">电子卡</el-radio>
             <el-radio v-model="cardtype"  class="cardtype" v-if="shopcard" :label="1">实物卡</el-radio>
-            
+          </div>
+          <el-tag
+            v-for="tag in history_tags"
+            :key="tag.name" 
+            @click="fastAddtag(tag)"
+            type="success">
+            {{tag.name}}
+          </el-tag>
+          <div style="display: flex">
+            <el-form-item label="商品标签:" label-width="80px" prop="newtag"> 
+              <el-tag
+                :key="index"
+                v-for="(tag, index) in  newtags"
+                closable
+                :disable-transitions="false"
+                @close="handleCloseTag(index)">
+                {{tag}}
+              </el-tag>
+              <el-input
+                class="input-new-tag"
+                v-if="inputVisible"
+                v-model="newtag"
+                ref="saveTagInput"
+                size="small"
+                @keyup.enter.native="handleInputConfirm"
+                @blur="handleInputConfirm"
+              >
+              </el-input>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 新标签</el-button>
+            </el-form-item> 
           </div>
           <div class="button"  >
               <el-button
@@ -97,33 +149,20 @@
           </div>
         </div>
       </div>
-      <el-upload
-        accept="turns/jpeg, turns/gif, turns/png"
-        action="prx/api/appfile/appfile/"
-        :headers="headers"
-        ref="piclist"
-        list-type="picture-card"
-        :on-preview="handlePictureCardPreview"
-        :on-remove="handleRemove"
-        :on-success="handleSuccess1"
-         
-        :limit="6"
-        :file-list="fileList"
-      >
-        <i class="el-icon-plus"></i>
-      </el-upload>
+       
       <el-dialog :visible.sync="dialogVisible">
         <img width="100%" :src="baseImage+dialogImageUrl" alt />
       </el-dialog>
-
-      <tinymce v-model="addProductsForm.content" />
+      <div style="display: flex">
+        <tinymce v-model="addProductsForm.content"  style="width: 450px;" />
+      </div>
       <!-- <el-form-item label="商品说明" prop="content" style="margin-top:10px">
         <el-input v-model="addProductsForm.content" type="textarea" :rows="5" placeholder="请输入商品说明"></el-input>
       </el-form-item>-->
       <div class="btn">
         <el-button @click="cancel">取消</el-button>
-        <el-button type="primary" @click="submitForm('addProductsForm','tableData')">{{uuid?'修改':'发布'}}</el-button>
-        <el-button type="primary" @click="nextStep">下一步</el-button>
+        <el-button type="primary" @click="submitForm">{{uuid?'修改':'发布'}}</el-button>
+        <el-button type="primary" @click="nextStep">测试</el-button>
       </div>
     </el-form>
   </div>
@@ -141,14 +180,17 @@ import {
 import {  getCategory } from "@/api/category";
 import { getToken } from "@/utils/auth";
 import tinymce from "@/components/Tinymce";
+import { getTagsApi } from "@/api/tags";
 export default {
   name: "alter-gifts",
   data() {
     return { 
       cardtype:0,//默认是电子卡
-      uuid:   "", 
-      fileList: [],
+      uuid:   "",  
+      newtag:"",
+      newtags:[],
       options:[],
+      history_tags:[],
       categoriesList:[],//类别
       baseImage:process.env.VUE_APP_BASE_IMAGE +"/",
       isbook:false,//是否为预约商品
@@ -182,6 +224,8 @@ export default {
         turns: null,
         content: null
       },
+      formfileData:null,
+      inputVisible:false,
       rules: {
         spec_number: [
           {
@@ -191,8 +235,8 @@ export default {
           }
         ]
       },
-      SRC: "",
-      SRC1: "",
+      preMainPic:"",
+      priVideoPath:"",  
       headers: {
         Authorization: `JWT ${getToken()}`
       },
@@ -206,11 +250,56 @@ export default {
   //判断能否添加规格 
   created(){
     this.getCategoryList()
+    this.formfileData = new FormData()
   },
   methods: {
+    fastAddtag(tag){
+      if (!( this.newtags.includes(tag.name))){
+          this.newtags.push(tag.name)
+      }
+    },
+    showInput() {
+        this.inputVisible = true;
+        this.$nextTick(_ => {
+          this.$refs.saveTagInput.$refs.input.focus();
+        });
+      },
+    handleInputConfirm() {
+        let inputValue = this.newtag;
+        if (inputValue) {
+          this.newtags.push(inputValue);
+        }
+        this.inputVisible = false;
+        this.newtag = '';
+      },
+    handleCloseTag(index){
+      this.newtags.splice(index, 1)
+    }, 
+    handleAvatarSuccessMainVideo(file){
+      this.priVideoPath = URL.createObjectURL(file.raw);
+      console.log(this.priVideoPath)
+    },
+    handleAvatarSuccessMainPic(file){
+      this.preMainPic = URL.createObjectURL(file.raw);
+    },
+    HandleVideo(param){  
+      this.formfileData.append("videopath", param.file) 
+    },
+    HandleMainImg(param){ 
+      console.log(param.file) 
+      this.formfileData.append("mainpic", param.file) 
+    },
     nextStep(){
       //下一步
       this.$refs.piclist.submit()
+    },
+    getTags(){
+      let param = {
+        label:"product"
+      }
+      getTagsApi(param).then(({data:{status, msg}})=>{ 
+         this.history_tags = msg
+      })
     },
     //添加行
     addRow() {
@@ -248,41 +337,75 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-    },
-
-    handleRemove(file, fileList) {
-      console.log(  fileList)
-      console.log(file )
-      this.fileList  = []
-      for (var i = 0; i < fileList.length; i++){
-          this.fileList.push({
-            url:fileList[i].url
-          })
-      } 
-    },
+    }, 
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
+    submitFileForm(){
+      this.$refs.upload.submit()
+      this.$refs.uploadvideo.submit() 
+    },
+    getEditData(){
+      // 数据格式化 
+      this.formfileData.append("producttype", 1)//民宿以外的商品
+      this.formfileData.append("specifications", JSON.stringify( this.tableData))
+      this.formfileData.append("title", this.addProductsForm.title)
+      this.formfileData.append("content", this.addProductsForm.content) 
+
+       
+      let tags = ""
+      if (this.newtags.length > 0){
+        this.newtags.forEach((e)=>{
+          tags += e +","
+        })
+      }
+ 
+      this.formfileData.append("tags", tags)
+      
+      if (this.shopcard == true){ 
+        this.formfileData.append("gifttype", 1) 
+        this.formfileData.append("cardtype", this.cardtype)
+      }
+      else{ 
+        this.formfileData.append("gifttype", 0) 
+      } 
+ 
+      if (this.category.length > 0) { 
+        this.formfileData.append("category", this.category[this.category.length - 1]) 
+      }
+
+      if (this.isbook == true) { 
+        this.formfileData.append("isbook", 1) 
+      } else {
+        this.formfileData.append("isbook", 0) 
+      }
+
+      if (this.ready == true) { 
+        this.formfileData.append("ready", 1) 
+      } else { 
+        this.formfileData.append("ready", 0) 
+      } 
+
+      if (this.recommend == true) { 
+        this.formfileData.append("recommend", 1) 
+      } else { 
+        this.formfileData.append("recommend", 0) 
+      } 
+    },
+
     getviewProducts() { 
       viewProducts({
         uuid: this.uuid
       } ).then((res) => {
         if (res.data.status == 0){
           this.addProductsForm = res.data.msg
-          console.log(res.data.msg)
-          this.fileList  = []
-          for (var i = 0; i < res.data.msg.turns.length; i++){
-             this.fileList.push({
-               url:this.baseImage+res.data.msg.turns[i]
-             })
-          }  
+          console.log(res.data.msg) 
           this.category = res.data.msg.categoryid;
           this.isbook = res.data.msg.isbook == 0 ? false:true;
           this.shopcard = res.data.msg.gifttype == 0 ? false:true;
           this.ready = res.data.msg.ready == 0 ? false:true;
-          this.recommend = res.data.msg.recommend == 0 ? false:true;
-          this.SRC = this.addProductsForm.picture
+          this.recommend = res.data.msg.recommend == 0 ? false:true; 
           this.tableData = this.addProductsForm.specifications
         }
         else{
@@ -305,104 +428,21 @@ export default {
       if (Type === 1) {
         this.dialogShow1 = true;
       }
-    },
-    //监听上传图片成功，成功后赋值给form ，并且赋值给图片src显示图片
-    handleSuccess(response, file, fileList) {
-      if (response.status == 0) {
-        this.SRC =   response.msg;
-        this.addProductsForm["picture"] = response.msg; 
-      } else {
-        this.$message.error(response.msg);
-      }
-    },
-    handleSuccess1(response, file, fileList) { 
-      
-      console.log(fileList)
-      if (response.status == 0) {  
-          this.fileList.push({
-            url:this.baseImage+response.msg
-          }) 
-         console.log(this.fileList)
-      } else {
-        this.$message.error(response.msg);
-      }
-    },
+    }, 
     //添加商品，修改商品
-    submitForm(addProductsForm, tableData) {
+    submitForm() {
+      this.submitFileForm()
+      this.getEditData()
       let product = {};
-        product = { 
-          title: this.addProductsForm.title, 
-          content: this.addProductsForm.content,
-          picture: this.addProductsForm.picture, 
-          specifications: JSON.stringify( this.tableData), 
-       };
-      if(this.category.length > 0){
-        product.category = this.category[this.category.length -1]
-      }
-      if (this.isbook == true){
-        product['isbook'] = 1
-      }
-      else{
-        product['isbook'] = 0
-      } 
-      if (this.ready == true){
-        product['ready'] = 1
-      }
-      else{
-        product['ready'] = 0
-      } 
-      if (this.recommend == true){
-        product['recommend'] = 1
-      }
-      else{
-        product['recommend'] = 0
-      } 
-      if (this.shopcard == true){
-        product['gifttype'] = 1
-        product['cardtype'] = this.cardtype
-      }
-      else{
-        product['gifttype'] = 0
-      } 
-      console.log(this.fileList)
-      for (var i = 0; i <this.fileList.length; i++){
-        console.log(this.fileList[i].url)
-        if(i ==0){
-          //
-
-          product.turns = this.fileList[i].url.replace(this.baseImage, "")
-        }
-        else{
-          product.turns += ","+this.fileList[i].url.replace(this.baseImage, "") 
-        }
-          
-      } 
-      console.log(product.turns)
-     
+       
       if (this.uuid) {
-         product.method = "put"
-         product.uuid = this.uuid
-        if (product.turns == null) {
-          delete product.turns;
-        }
-        if (product.title == null) {
-          delete product.title;
-        }
-        if (product.category == null) {
-          delete product.category;
-        }
-        if (product.content == "") {
-          delete product.content;
-        }
-        if (product.picture == null) {
-          delete product.picture;
-        }
-
-        alterProduct(product).then(({ data }) => {
+        this.formfileData.append("method", "put") 
+        this.formfileData.append("uuid", this.uuid) 
+         
+        alterProduct(this.formfileData).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.addProductsForm = {};
-            this.SRC = "";
+            this.addProductsForm = {}; 
             this.addProductsForm.content = "";
             this.tableData = [];
             this.getviewProducts();
@@ -411,18 +451,11 @@ export default {
           }
         });
       } else {  
-        if (product.turns == null) {
-          delete product.turns;
-        }
-        //delete product.specifications
-        if (product.specifications == null || product.specifications.length === 0) {
-          delete product.specifications;
-        }
-        addProducts(product).then(({ data }) => {
+         
+        addProducts(this.formfileData).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.addProductsForm = {};
-            this.SRC = "";
+            this.addProductsForm = {}; 
             this.addProductsForm.content = "";
             this.tableData = [];
             this.$router.push({
@@ -435,8 +468,7 @@ export default {
       }
     },
     cancel() {
-      this.addProductsForm = [];
-      this.SRC = "";
+      this.addProductsForm = []; 
       this.addProductsForm.content = "";
       this.tableData = [];
     },
@@ -487,6 +519,7 @@ export default {
 
     }  
     this.getProductsClass(); 
+    this.getTagsApi()
   }
 };
 </script>
