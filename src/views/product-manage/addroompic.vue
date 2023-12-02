@@ -87,6 +87,7 @@ export default {
       pricemode: 0,
       category: "",
       index:0,
+      producttype:0,
       formfileData: null,
       pics: [
         {
@@ -118,10 +119,20 @@ export default {
       this.uuid = this.$route.query.uuid;
       this.getviewProducts();
       this.getImgs()
-    } else {
-    }
+    } 
+    if (this.$route.query.producttype) {
+      this.producttype = this.$route.query.producttype; 
+      if(this.producttype != 0){
+        this.pics =  [
+        {
+          name: "",
+          imgs: [],
+          sort: 1,
+        } ]
+      }
+    } 
     this.formfileData = new FormData();
-
+    
   },
   methods: {
     getImgs(){
@@ -197,6 +208,10 @@ export default {
     },
     delAlbum(index) {
       let album = this.pics[index]
+      if(album.id == null){
+        this.pics.splice(index, 1)
+        return 
+      }
       
       let dataform = new FormData()
       dataform.append("typeid", album.id)

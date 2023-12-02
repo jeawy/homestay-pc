@@ -65,9 +65,12 @@
             <el-checkbox v-model="isbook"  class="book">预约商品</el-checkbox> 
             <el-checkbox v-model="ready"  class="book">立即上架</el-checkbox> 
             <el-checkbox v-model="recommend"  class="book">设为推荐商品</el-checkbox>
-            <el-checkbox v-model="shopcard"  class="book">购物卡</el-checkbox>
-            <el-radio v-model="cardtype" class="cardtype" v-if="shopcard" :label="0">电子卡</el-radio>
-            <el-radio v-model="cardtype"  class="cardtype" v-if="shopcard" :label="1">实物卡</el-radio>
+            
+          </div>
+          <div style="display: flex"> 
+            <el-form-item label-width="90px" label="推荐理由" prop="lighlight">
+              <el-input v-model="addProductsForm.lighlight" maxlength="50" style="width: 250px;"></el-input>
+            </el-form-item> 
           </div>
           <el-tag
             v-for="tag in history_tags"
@@ -192,7 +195,7 @@ export default {
       options:[],
       history_tags:[],
       categoriesList:[],//类别
-      baseImage:process.env.VUE_APP_BASE_IMAGE +"/",
+      baseImage:process.env.VUE_APP_BASE_IMAGE +"/images/",
       isbook:false,//是否为预约商品
       ready:false,// 立即上架
       recommend:false,//是否设为推荐商品
@@ -222,7 +225,8 @@ export default {
         title: null,
         picture: null,
         turns: null,
-        content: null
+        content: null,
+        lighlight:""
       },
       formfileData:null,
       inputVisible:false,
@@ -352,6 +356,7 @@ export default {
       this.formfileData.append("specifications", JSON.stringify( this.tableData))
       this.formfileData.append("title", this.addProductsForm.title)
       this.formfileData.append("content", this.addProductsForm.content) 
+      this.formfileData.append("lighlight", this.addProductsForm.lighlight)
 
        
       let tags = ""
@@ -407,6 +412,11 @@ export default {
           this.ready = res.data.msg.ready == 0 ? false:true;
           this.recommend = res.data.msg.recommend == 0 ? false:true; 
           this.tableData = this.addProductsForm.specifications
+          this.preMainPic = this.baseImage + this.addProductsForm.picture
+          if ( this.addProductsForm.videopath){
+            this.priVideoPath = this.baseImage + this.addProductsForm.videopath 
+          }
+          
         }
         else{
           this.$notify({

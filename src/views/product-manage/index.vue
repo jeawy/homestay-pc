@@ -133,6 +133,14 @@
               @click="targetDetail(row.uuid)"
             />
           </el-tooltip>
+          <el-tooltip effect="dark" content="图片库" placement="top">
+            <el-link
+              :underline="false"
+              icon="el-icon-picture-outline"
+              type="primary"
+              @click="modifypic(row)"
+            />
+          </el-tooltip>
           <el-tooltip effect="dark" content="修改" placement="top">
             <el-link
               :underline="false"
@@ -233,6 +241,16 @@ export default {
     }
   },
   methods: {
+    modifypic(item){
+      console.log(item)
+      this.$router.push({
+          name: "add-room-pic",
+          query: {
+            uuid: item.uuid,
+            producttype:1
+          },
+        });
+    },
     resetParams(){
       this.queryForm={
         selling:"1",
@@ -273,7 +291,7 @@ export default {
     },
     modify(uuid){ 
       this.$router.push({
-        name:"add-gifts",
+        name:"add-product",
         query:{
           uuid:uuid
         }
