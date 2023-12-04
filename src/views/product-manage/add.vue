@@ -45,7 +45,7 @@
             <template v-else>
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
-                民宿封面视频，或
+                封面视频，或
                 <em>点击上传</em>
               </div>
             </template>

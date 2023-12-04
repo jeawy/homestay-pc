@@ -166,8 +166,7 @@ export default function asyncRoutes(params) {
           }
         }
       ]
-    },
-
+    }, 
     {
       path: "/category",
       component: Layout,
@@ -184,6 +183,29 @@ export default function asyncRoutes(params) {
           hidden: false,
 
           component: () => import("@/views/category/list"),
+          meta: {
+            title: "列表",
+            icon: "liebiao"
+          }
+        }
+      ]
+    },
+    {
+      path: "/coupon",
+      component: Layout,
+      redirect: "noRedirect",
+      alwaysShow: true,
+      meta: {
+        title: "优惠券",
+        icon: "wenzhang"
+      },
+      children: [
+        {
+          path: "coupon-list",
+          name: "coupon-list",
+          hidden: false,
+
+          component: () => import("@/views/coupon/list"),
           meta: {
             title: "列表",
             icon: "liebiao"
