@@ -207,6 +207,7 @@ export default {
       });
     },
     delAlbum(index) {
+      console.log(this.pics)
       let album = this.pics[index]
       if(album.id == null){
         this.pics.splice(index, 1)
@@ -248,27 +249,31 @@ export default {
     },
     handleRemove(file, fileList) {
       console.log(file, fileList)
-      let dataform = new FormData()
-      dataform.append("imgid", file.name)
-      dataform.append("method", "delete")
-      updateProductImg(dataform).then(({data:{status, msg}})=>{
-        console.log(msg)
-        if (status == 0){ 
-          this.$notify({
-            type: "success",
-            title: "删除成功",
-            message: msg
-          });
-        }
-        else{
-          this.$notify({
-            type: "error",
-            title: "删除失败",
-            message: msg,
-            duration: 0,
-          });
-        }
-      }) 
+      if(!isNaN( file.name) && parseInt( file.name) > 0) {
+        let dataform = new FormData()
+        dataform.append("imgid", file.name)
+        dataform.append("method", "delete")
+        updateProductImg(dataform).then(({data:{status, msg}})=>{
+          console.log(msg)
+          if (status == 0){ 
+            this.$notify({
+              type: "success",
+              title: "删除成功",
+              message: msg
+            });
+          }
+          else{
+            this.$notify({
+              type: "error",
+              title: "删除失败",
+              message: msg,
+              duration: 0,
+            });
+          }
+        }) 
+          
+      }
+      
     },
     getviewProducts() {
       viewProducts({
@@ -283,8 +288,7 @@ export default {
               url: this.baseImage + res.data.msg.turns[i],
             });
           }
-          this.pricemode = 0;
-          this.SRC = this.addProductsForm.picture;
+          this.pricemode = 0; 
         } else {
           this.$notify({
             type: "error",
@@ -319,7 +323,7 @@ export default {
           if (data.status === 0) {
             this.$message.success(data.msg);
             this.addProductsForm = {};
-            this.SRC = "";
+            
             this.addProductsForm.content = "";
 
             this.getviewProducts();
@@ -334,8 +338,7 @@ export default {
         addHomeStayProducts(this.formfileData).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
-            this.addProductsForm = {};
-            this.SRC = "";
+            this.addProductsForm = {}; 
             this.addProductsForm.content = "";
             this.$router.push({
               name: "product-manage",

@@ -285,7 +285,7 @@ export default {
     },
     handleAdd(){
       this.$router.push({
-        name:"add-gifts",
+        name:"add-product",
          
       }) 
     },
