@@ -159,7 +159,7 @@
 </template>
 
 <script>
-import { queryProductList, deleteProduct } from "@/api/content";
+import { querycontentList, deletecontent } from "@/api/content";
 export default {
   data() {
     return {
@@ -236,7 +236,7 @@ export default {
     },
     handleQueryDetail(id) {
       this.$router.push({
-        name: "product-detail",
+        name: "content-detail",
         query: {
           id
         },
@@ -258,7 +258,7 @@ export default {
       if (Array.isArray(uuids)) {
         uuids = uuids.join();
       }
-      deleteProduct({ method: "delete", uuids,communityuuid:localStorage.getItem('communityuuid') }).then(
+      deletecontent({ method: "delete", uuids,communityuuid:localStorage.getItem('communityuuid') }).then(
         (res) => {
           
           let msg = res.msg;
@@ -287,7 +287,7 @@ export default {
     handleQueryList(currentPage) {
       let that = this;
       this.isTableLoading = true;
-      queryProductList({...this.queryForm,
+      querycontentList({...this.queryForm,
       page: currentPage,
         pagenum: this.paginationsize, 
       })

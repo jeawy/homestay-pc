@@ -42,7 +42,7 @@ export const uploadFile = data =>
   });
 
   // 新增商品
-export const addcontent = data =>
+export const addContent = data =>
 AXIOS.post("/content/contents/", data);
 // 修改商品
 export const putcontent = data =>

@@ -89,8 +89,8 @@
 
 <script>
 import {
-  addProduct,
-  queryProductDetail,
+  addContent,
+  querycontentDetail,
   queryUserList,
   querycategoryList,
   putProduct,
@@ -202,7 +202,7 @@ export default {
     },
     // 根据ID查询详情（修改前）
     queryDetail() {
-      queryProductDetail({
+      querycontentDetail({
         productid: this.$route.query.id,
       }).then(({ data: { status, msg } }) => {
         if (status === 0) {
@@ -239,8 +239,8 @@ export default {
         this[`${this.type}Product`]();
       });
     },
-    addProduct() {
-      addProduct({
+    addContent() {
+      addContent({
         ...this.formData,
         rules: JSON.stringify(this.formData.rules),
         method: "create",

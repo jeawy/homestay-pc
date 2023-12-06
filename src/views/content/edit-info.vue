@@ -90,11 +90,11 @@
 
 <script>
 import {
-  addProduct,
-  queryProductDetail,
+  addContent,
+  querycontentDetail,
   queryUserList,
   querycategoryList,
-  putProduct,
+  putcontent,
 } from "@/api/content";
 import { getToken } from "@/utils/auth";
 import tinymce from "@/components/Tinymce";
@@ -208,7 +208,7 @@ export default {
     },
     // 根据ID查询详情（修改前）
     queryDetail() {
-      queryProductDetail({
+      querycontentDetail({
         uuid: this.$route.query.uuid,
         communityuuid:localStorage.getItem('communityuuid')
       }).then((res) => {
@@ -243,15 +243,15 @@ export default {
           this.formData.rules[this.mainrule].mainrule = 1;
         }
         this.formData.status = 1 //
-        this[`${this.type}Product`]();
+        this[`${this.type}Content`]();
       });
     },
-    addProduct() {
+    addContent() {
       if( this.formData.detail){
         this.formData.detail = this.formData.detail.replace('<img src=','<img style="max-width:100%" src=')
       }
        
-      addProduct({
+      addContent({
         ...this.formData,
         rules: JSON.stringify(this.formData.rules),
         method: "create",
@@ -283,12 +283,12 @@ export default {
           this.isLoading = false;
         });
     },
-    putProduct() {
+    putContent() {
       if( this.formData.detail){
         this.formData.detail = this.formData.detail.replace(/<img src=/g,'<img style="max-width: 100%" src=')
       }
       
-      putProduct({
+      putcontent({
         ...this.formData,
         communityuuid:localStorage.getItem('communityuuid'),
         rules: JSON.stringify(this.formData.rules),
