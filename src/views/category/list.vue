@@ -61,6 +61,7 @@
               v-for="sub in scope.row.sub"
               :key="sub.id"
               closable
+              @click="onEdit(sub)"
               @close="closeSub(sub.id, sub.name)"
               type="info"
             >
