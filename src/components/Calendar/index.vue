@@ -16,13 +16,15 @@
     </div>
     <div class="mycalendar">
       <div class="line2">
-        <div class="lineitem" :style="{'height':height +'px', 'line-height':height +'px'}" v-for="(item, index) in weekdays" :key="index">
+        <div class="lineitem" :style="{'height':height +'px', 'line-height':height +'px'}" 
+        v-for="(item, index) in weekdays" :key="index">
           <div class="weekend" v-if="item.weekend == 1">{{ item.name }}</div>
           <div class="workday" v-else>{{ item.name }}</div>
         </div>
       </div>
       <div class="months"> 
-          <div    class="day" :style="{'height':height +'px' }" :class="[dayitem.lastmonth==1?'lastmonth':'']" v-for="(dayitem, dayindex) in  days" :key="dayindex" @click="openDialog(dayitem)"  > 
+          <div    class="day" :style="{'height':height +'px' }" :class="[dayitem.lastmonth==1?'lastmonth':'']" 
+          v-for="(dayitem, dayindex) in  days" :key="dayindex" @click="openDialog(dayitem)"  > 
               <div  class="daytxt"   >{{ dayitem.day |dateDayFormat  }}</div >   
               <div  class="holiday" v-if="dayitem.holiday" >{{ dayitem.holiday  }}</div >   
               <div  class="holiday" v-if="dayitem.price" >￥{{ dayitem.price  }}</div > 
@@ -111,15 +113,18 @@ export default {
   beforeDestroy() {},
   methods: {
     openDialog(day){
+      console.log(222222)
       this.showEditDialog = !this.showEditDialog
       this.currendday = day
+      console.log(this.currendday)
     },
     handlDate( ) {
       //日期点击事件
       let data = {
-        productuuid:this.productuuid,
+        id:this.currendday.id,
         price:this.currendday.price,
-        date : this.$options.filters['dateFormat'](this.currendday.day)
+        date : this.$options.filters['dateFormat'](this.currendday.day),
+        method:"put"
       }  
       alterProductSpecs(data).then(({data:{status, msg}})=>{
           //编辑价格
