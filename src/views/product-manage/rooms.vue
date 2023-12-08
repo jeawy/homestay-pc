@@ -6,8 +6,12 @@
           <el-select
             filterable
             v-model="queryForm.category"
-            style="width: 90px"
+            style="width: 120px"
           >
+          <el-option 
+              label="全部"
+              value="-1"
+            />
             <el-option
               v-for="item of categories"
               :key="item.name"
@@ -203,8 +207,9 @@ export default {
       this.handleQueryList();
     },
     getCategories() {
-      getCategory({ pc: "" }).then(({ data }) => {
+      getCategory({ pc: "", categorytype:0 }).then(({ data }) => {
         if (data.status == 0) {
+          console.log(data)
           this.categories = data.msg; 
         } else {
           return false;

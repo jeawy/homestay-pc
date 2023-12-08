@@ -580,7 +580,9 @@ export default {
     },
     getCategoryList() {
       //获取民宿的类别
-      getCategory().then(({ data }) => {
+      getCategory({
+        categorytype:0
+      }).then(({ data }) => {
         if (data.status == 0) {
           this.categoriesList = data.msg;
           let children = [];

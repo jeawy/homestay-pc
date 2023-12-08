@@ -166,7 +166,8 @@
 
         <el-form-item label="分类归属" prop="name">
           <el-radio v-model="actForm.categorytype" class="cardtype"   :label="0">民宿</el-radio>
-          <el-radio v-model="actForm.categorytype"  class="cardtype"  :label="1">其他</el-radio>
+          <el-radio v-model="actForm.categorytype" class="cardtype"   :label="1">景区门票</el-radio>
+          <el-radio v-model="actForm.categorytype"  class="cardtype"  :label="10">其他</el-radio>
         </el-form-item>
         
 
@@ -433,6 +434,10 @@ export default {
         return "民宿"
       }
       else if (status == 1)
+      {
+        return "景区门票"
+      } 
+      else if (status == 10)
       {
         return "其他"
       } 

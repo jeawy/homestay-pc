@@ -484,7 +484,8 @@ export default {
     },
     getCategoryList(){
       //获取商品的类别
-      getCategory().then(({data})=>{ 
+      let categorytypes = "1,10" 
+      getCategory({pc:"", categorytypes:categorytypes}).then(({data})=>{ 
          if(data.status == 0){
            this.categoriesList = data.msg
            let children = []

@@ -3,7 +3,11 @@
     <el-row type="flex" justify="space-between">
       <el-form inline>
          <el-form-item label="商品类别">
-          <el-select filterable v-model="queryForm.category" style="width: 90px">
+          <el-select filterable v-model="queryForm.category" style="width: 120px">
+            <el-option 
+              label="全部"
+              value="-1"
+            />
             <el-option
               v-for="item of categories"
               :key="item.name"
@@ -260,7 +264,8 @@ export default {
       this.handleQueryList()
     },
     getCategories(){
-      getCategory({pc:""}).then(({data})=>{
+      let categorytypes = "1,10"
+      getCategory({pc:"", categorytypes:categorytypes}).then(({data})=>{
         
           if(data.status == 0){
               this.categories = data.msg
