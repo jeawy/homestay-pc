@@ -56,6 +56,18 @@
               <i class="el-icon-picture" style="color:#909399"></i>
             </div>
           </el-image>
+          
+        </template>
+      </el-table-column>
+      <el-table-column label="类别标题" align="center">
+        <template slot-scope="scope">
+          <div slot="placeholder" class="image-slot">
+            <span class="dot">{{ scope.row.name }}</span>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="子类标题" align="center">
+        <template slot-scope="scope">
           <div>
             <el-tag
               v-for="sub in scope.row.sub"
@@ -65,15 +77,8 @@
               @close="closeSub(sub.id, sub.name)"
               type="info"
             >
-              {{ sub.name }}
+              【排序:{{ sub.sort }}】{{ sub.name }} 
             </el-tag>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column label="类别标题" align="center">
-        <template slot-scope="scope">
-          <div slot="placeholder" class="image-slot">
-            <span class="dot">{{ scope.row.name }}</span>
           </div>
         </template>
       </el-table-column>
@@ -352,7 +357,7 @@ export default {
       this.multipleSelection = val;
     },
     openTopDialog() {
-      this.parentid = -1;
+      this.parentid = null;
       this.dialogName = "添加类别";
       this.dialogShow = true;
       this.actForm.sort = 1
@@ -412,6 +417,8 @@ export default {
           this.$message.success(data.msg);
           this.dialogShow = false;
           this.$refs["actForm"].resetFields();
+          this.formfileData = new FormData()
+          this.$refs.upload.clearFiles()
           this.getCategories();
         } else {
           this.$message.error(data.msg);
