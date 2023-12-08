@@ -77,6 +77,11 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column label="排序" align="center"  width="80" >
+        <template slot-scope="scope"> 
+            <span class="dot">{{ scope.row.sort }}</span> 
+        </template>
+      </el-table-column>
       <el-table-column label="归属" align="center"  width="80" >
         <template slot-scope="scope">
           <div slot="placeholder" class="image-slot">
@@ -158,22 +163,30 @@
           <el-radio v-model="actForm.categorytype" class="cardtype"   :label="0">民宿</el-radio>
           <el-radio v-model="actForm.categorytype"  class="cardtype"  :label="1">其他</el-radio>
         </el-form-item>
+        
+
+        <el-form-item label="排序" prop="sort">
+          <el-input-number v-model="actForm.sort"  :min="1" :max="10" label="排序"></el-input-number>
+        </el-form-item>
+
 
         <el-form-item label="类别图片">
           <el-upload
             accept="image/jpeg, image/gif, image/png"
             ref="upload"
             class="upload-demo"
-            action="prx/api/appfile/appfile/"
+            action=""
             :headers="headers"
-            :on-success="handleSuccess"
+            :auto-upload="false"
+            :http-request="HandleImg" 
             drag
             :show-file-list="false"
+            :on-change="handleAvatarSuccessMainPic"
           >
             <el-image
-              v-if="SRC"
-              style="width: 100%; height: 100%"
+              v-if="SRC" 
               :src="SRC"
+              fit="fill"
             ></el-image>
             <template v-else>
               <i class="el-icon-upload"></i>
@@ -194,7 +207,7 @@
   </div>
 </template>
 <script>
-import { getCategory, postCategory } from "@/api/category";
+import { getCategory, postCategory,deleteCategory, visibleCategory } from "@/api/category";
 import { getToken } from "@/utils/auth";
 export default {
   data() {
@@ -214,9 +227,11 @@ export default {
         name: null,
         icon: "",
         visible: 1,
-        categorytype:0
+        categorytype:0,
+        sort:1,
       },
       SRC: "",
+      formfileData:null,
       headers: {
         Authorization: `JWT ${getToken()}`
       },
@@ -234,10 +249,13 @@ export default {
     };
   },
   methods: {
+    handleAvatarSuccessMainPic(file){
+      this.SRC = URL.createObjectURL(file.raw);
+    },
     //  显隐切换
     onVisibleChange(visible, row, idx) {
       this.categoriesList.splice(idx, 1, { ...row, disabled: true });
-      postCategory({ id: row.id, method: "put", visible }).then(({ data }) => {
+      visibleCategory({ id: row.id, method: "put", visible }).then(({ data }) => {
         if (data.status === 0) {
           this.$message.success(data.msg);
           this.categoriesList.splice(idx, 1, {
@@ -267,6 +285,10 @@ export default {
         }
       });
     },
+    HandleImg(param){  
+      console.log(param)
+      this.formfileData.append("icon", param.file) 
+    },
     initForm() {
       this.actForm = {
         name: null,
@@ -281,7 +303,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        postCategory({ ids: id, method: "delete" }).then(({ data }) => {
+        deleteCategory({ ids: id, method: "delete" }).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
             this.getCategories();
@@ -298,7 +320,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        postCategory({ ids: id, method: "delete" }).then(({ data }) => {
+        deleteCategory({ ids: id, method: "delete" }).then(({ data }) => {
           if (data.status === 0) {
             this.$message.success(data.msg);
             this.getCategories();
@@ -316,7 +338,7 @@ export default {
         type: "warning"
       }).then(() => {
         const ids = this.multipleSelection.map(item => item.id).join(",");
-        postCategory({ ids: ids, method: "delete" }).then(({ data }) => {
+        deleteCategory({ ids: ids, method: "delete" }).then(({ data }) => {
           if (data.status === 0) {
             this.getCategories();
             this.$message.success(data.msg);
@@ -333,6 +355,8 @@ export default {
       this.parentid = -1;
       this.dialogName = "添加类别";
       this.dialogShow = true;
+      this.actForm.sort = 1
+      this.actForm.categorytype = 0
     },
     //添加类别
     addAct(actForm) {
@@ -343,16 +367,47 @@ export default {
       this.parentid = id;
       this.dialogName = "添加子类别";
       this.dialogShow = true;
+      this.actForm.sort = 1
+      this.actForm.categorytype = 0
     },
     //关闭添加类别弹出框
     cancel() {
       this.postSpread();
     },
-    postSpread() {
+    getEditData(){
+      // 数据格式化
+      
+      if (this.actForm.method == 'put')
+      {
+        this.formfileData.append("method", "put")
+        this.formfileData.append("id", this.actForm.id)
+      }
+ 
       if (this.parentid > 0) {
         this.actForm.parentid = this.parentid;
+        this.formfileData.append("parentid", this.parentid)
       }
-      postCategory(this.actForm).then(({ data }) => {
+      
+      this.formfileData.append("name", this.actForm.name)
+      this.formfileData.append("visible", this.actForm.visible) 
+
+      this.formfileData.append("categorytype", this.actForm.categorytype)
+      this.formfileData.append("sort", this.actForm.sort)  
+    },
+    postSpread() {
+      if(this.actForm.name==null ||this.actForm.name=="" ){
+        this.$notify({
+                type:"error",
+                message:"添加失败",
+                duration:2000,
+                title:"请输入类别名称"
+              }) 
+
+              return 
+      }
+      this.$refs.upload.submit()
+      this.getEditData()
+      postCategory(this.formfileData).then(({ data }) => {
         if (data.status == 0) {
           this.$message.success(data.msg);
           this.dialogShow = false;
@@ -362,17 +417,7 @@ export default {
           this.$message.error(data.msg);
         }
       });
-    },
-    //监听上传图片成功，成功后赋值给form ，并且赋值给图片src显示图片
-    handleSuccess(response, file, fileList) {
-      console.log(response);
-      if (response.status == 0) {
-        this.SRC = this.$store.state.BASE_URL_IMAGE + "/" + response.msg;
-        this.actForm["icon"] = response.msg;
-      } else {
-        this.$message.error(response.msg);
-      }
-    }
+    }, 
   },
   filters:{
     categorytypetxt(status){
@@ -388,6 +433,7 @@ export default {
   },
   created() {
     this.getCategories();
+    this.formfileData = new FormData()
   }
 };
 </script>
@@ -395,4 +441,16 @@ export default {
 .row-lg {
   margin-bottom: 5px;
 }
+
+/deep/  .upload-demo { 
+  .el-upload-dragger {
+    width: 190px !important;
+    height: 190px !important;
+    margin-right:15px;
+    .el-icon-upload {
+      font-size: 40px;
+      margin-top: 20px;
+    } 
+  }
+} 
 </style>

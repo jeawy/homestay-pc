@@ -6,6 +6,19 @@ export function getCategory(params) {
   
 //添加、删除
 export function postCategory(data) {
-  return AXIOS.post("/category/categories/api", data);
+   
+  return AXIOS.post("/category/categories/api", data, {
+    headers: {
+        'Content-Type': 'multipart/form-data;charset=UTF-8',
+    }
+  });
 }
-  
+
+
+export function deleteCategory(data) { 
+  return AXIOS.post("/category/categories/api", data  );
+}
+
+export function visibleCategory(data) { 
+  return AXIOS.post("/category/categories/api", data  );
+}

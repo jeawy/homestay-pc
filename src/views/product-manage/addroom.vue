@@ -210,10 +210,7 @@
         <tinymce v-model="addProductsForm.content"  style="width: 450px;" />
         <div class="video"> 
           <div style="margin-left: 20px;  width:500px">
-            <div class="rules">
-              <div>退订规则</div>
-              <el-input v-model="addProductsForm.unsubscribe_rules"  type="textarea" :rows="5" placeholder="退订规则"></el-input> 
-            </div>
+             
             <div class="rules">
               <div>入住须知</div>
               <el-input v-model="addProductsForm.checkin_notice"  type="textarea" :rows="5" placeholder="入住须知"></el-input> 

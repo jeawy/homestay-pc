@@ -219,7 +219,7 @@
           <div>
             1、<strong>每个登记薄都会生成一个二维码，可下载打印、张贴供别人扫码登记</strong> 
           </div>
-          <div>2、<strong>支持微信及茶玖茗扬APP扫码登记</strong> </div>
+          <div>2、<strong>支持微信及吉维尼APP扫码登记</strong> </div>
           <div>
             3、<strong>支持自定义登记薄表头</strong> 
           </div>

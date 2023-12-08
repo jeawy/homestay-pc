@@ -298,7 +298,7 @@ export default {
 
               context.font = "18px Arial bolder";
               context.fillStyle = "#515151";
-              context.fillText("微信或者茶玖茗扬APP", 58, 310);
+              context.fillText("微信或者吉维尼APP", 58, 310);
 
               context.font = "26px Arial bolder";
               context.fillStyle = "#ff8000";
@@ -313,7 +313,7 @@ export default {
               context.drawImage(imglogo, 190, 380, 80, 80);
               context.font = "14px Arial bolder";
               context.fillStyle = "#515151";
-              context.fillText("茶玖茗扬APP", 190, 480);
+              context.fillText("吉维尼APP", 190, 480);
             }
           };
 
