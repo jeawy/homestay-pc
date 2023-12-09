@@ -5,25 +5,18 @@
       <div>
         阅读<span>{{ count | number }}次</span>
       </div>
-      <div class="right"> 
-        <div class="comment"   @click="openPopup">
+      <div class="right">
+        <div class="comment" @click="openPopup">
           评论({{ totalcomments | number }})
         </div>
       </div>
     </div>
-    <div class="likes" v-if="likes.length > 0"> 
-      <div class="holder">
-        <div class="likeitem" v-for="(item, index) in likes" :key="index">
-          <el-image class="likeimg" :src="item.image"></el-image>
-          <div class="username">{{ item.user__username }}</div>
-        </div>
-      </div> 
-    </div>
-    <div class="comments" v-loading="loading"  >
+    <div class="comments" v-loading="loading">
       <div class="tags">
         <el-image class="zanimg" :src="baseAppUrl + `pinlun.png`"></el-image>
         <div class="zantxt">评论</div>
       </div>
+
       <div class="holder">
         <div class="commentitem" v-for="(item, index) in comments" :key="index">
           <div class="commentimg">
@@ -43,9 +36,10 @@
             <div class="line2">
               <el-rate
                 v-model="item.rate"
-                disabled 
+                disabled
                 show-text
-                text-color="#ff9900" >
+                text-color="#ff9900"
+              >
               </el-rate>
               <div class="content">{{ item.content }}</div>
               <div class="topimageholder" v-if="item.newimages.length">
@@ -70,6 +64,56 @@
                 </div>
               </div>
             </div>
+            <div class="subs">
+              <div
+                class="commentitem"
+                v-for="(subitem, subindex) in item.subs"
+                :key="subindex"
+              >
+                <div class="commentimg">
+                  <el-image class="userimg" :src="subitem.image"></el-image>
+                </div>
+                <div class="comment-content">
+                  <div class="line1">
+                    <div class="username">
+                      <span class="name">{{ subitem.user.username }}</span>
+                      <span v-if="subitem.parent" class="txt">回复</span>
+                      <span v-if="subitem.parent" class="username parent">{{
+                        subitem.parent
+                      }}</span>
+                    </div>
+                    <div class="date">{{ subitem.date | timeFormat }}</div>
+                  </div>
+                  <div class="line2">
+                    <div class="content">{{ subitem.content }}</div>
+                    <div class="topimageholder" v-if="subitem.newimages.length">
+                      <el-image
+                        v-for="(imgitem, imgindex) in subitem.newimages"
+                        :key="imgindex"
+                        :src="imgitem"
+                        class="picture"
+                        :preview-src-list="subitem.newimages"
+                      />
+                    </div>
+                    <div class="actionsholder">
+                      <div
+                        class="reply"
+                        @click="reply(subitem.uuid, subitem.user.username)"
+                      >
+                        回复
+                      </div>
+
+                      <div
+                        class="delete"
+                        @click="deleteComment(subitem.uuid, index)"
+                      >
+                        删除
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- end comments -->
@@ -85,9 +129,9 @@
         <tui-nomore :visible="nomore" bgcolor="#fafafa"></tui-nomore>
       </div>
     </div>
+
     <el-dialog width="518px" lock-scroll center :visible.sync="isReplyShow">
       <div class="addcomment">
-        
         <!-- 添加评论 -->
         <el-input
           type="textarea"
@@ -95,35 +139,29 @@
           v-model="content"
           size=".el-input--mini"
           :autosize="{ minRows: 3, maxRows: 6 }"
-        /> 
-       
-        <el-rate
-          class="rate"
-          v-model="rate"
-          show-text>
-        </el-rate> 
-        <div class="appraisetxt">
-           不选择时间时，默认当前
-          </div>
-        <el-date-picker 
+        />
+
+        <el-rate class="rate" v-model="rate" show-text> </el-rate>
+        <div class="appraisetxt">不选择时间时，默认当前</div>
+        <el-date-picker
           v-model="datetime"
           type="datetime"
           format="yyyy/MM/dd HH:mm:ss"
           value-format="yyyy/MM/dd HH:mm:ss"
-          placeholder="选择评论时间">
+          placeholder="选择评论时间"
+        >
         </el-date-picker>
-        <div class="appraisetxt">
-           不选择虚拟用户时，默认是自己评价
-          </div>
+        <div class="appraisetxt">不选择虚拟用户时，默认是自己评价</div>
         <el-select v-model="useruuid" filterable placeholder="虚拟用户">
-            <el-option
-              v-for="item in users"
-              :key="item.username"
-              :label="item.username"
-              :value="item.uuid">
-            </el-option>
-          </el-select>
-       
+          <el-option
+            v-for="item in users"
+            :key="item.username"
+            :label="item.username"
+            :value="item.uuid"
+          >
+          </el-option>
+        </el-select>
+
         <div class="comment-title">
           图片(选填,总大小10M以下)
           <div class="uni-uploader-info">{{ fileList.length }}/9</div>
@@ -177,29 +215,29 @@
 </template>
 
 <script>
-import { 
+import {
   getCountApi,
   modifyCommentApi,
   uploadFile,
-  getCommentsApi
+  getCommentsApi,
 } from "@/api/content";
-import { getUserList   } from "@/api/admin";
+import { getUserList } from "@/api/admin";
 import dayjs from "dayjs";
 import tuiNomore from "./nomore";
 import axios from "axios";
 export default {
   props: [
-    "entityuuid", // 实体UUID 
+    "entityuuid", // 实体UUID
     "entitytype", // 实体id
     "baseUrl", //
-    "baseAppUrl", 
+    "baseAppUrl",
   ],
   components: {
-    tuiNomore
+    tuiNomore,
   },
   data() {
     return {
-      users:[],
+      users: [],
       isReplyShow: false,
       isSubmitLoading: false,
       page: 1,
@@ -208,18 +246,17 @@ export default {
       nomore: false,
       loading: false,
       count: 0, //阅读数
-      likes: [],
-      rate:null,
+      rate: null,
       fileList: [],
       content: "",
-      datetime:"",
-      useruuid:"",
+      datetime: "",
+      useruuid: "",
       comments: [],
       totalcomments: 0,
       placeholder: "评论...",
       pid: "", // 回复评论的id ,
       dialogImageUrl: "",
-      dialogVisible: false
+      dialogVisible: false,
     };
   },
   filters: {
@@ -233,27 +270,27 @@ export default {
     },
     timeFormat(val) {
       return val && dayjs.unix(val).format("YYYY-MM-DD HH:mm");
-    }
+    },
   },
   watch: {
     entityuuid(val) {
       if (!val) return;
-      this.getCount(); 
-      this.getComments()
-    }, 
+      this.getCount();
+      this.getComments();
+    },
   },
-  mounted() {  
-    this.getUsers()
+  mounted() {
+    this.getUsers();
   },
   methods: {
-    getUsers(){
+    getUsers() {
       let param = {
-        virtual:1
-      }
-      getUserList(param).then(({data})=>{
-        console.log(data)
-        this.users = data
-      })
+        virtual: 1,
+      };
+      getUserList(param).then(({ data }) => {
+        console.log(data);
+        this.users = data;
+      });
     },
     beforeUploadHandler({ type, size }) {
       const IS_IMAGE = type.includes("image");
@@ -280,15 +317,15 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         confirmButtonClass: "comment-submit",
-        type: "warning"
+        type: "warning",
       }).then(() => {
         modifyCommentApi({
           method: "delete",
-          uuid
+          uuid,
         }).then(({ msg }) => {
           this.$message({
             type: "success",
-            message: msg
+            message: msg,
           });
           this.page = 1;
           this.getComments();
@@ -315,27 +352,39 @@ export default {
       // 获得评论列表
       this.nomore = false;
       this.more = false;
-      this.loading = true; 
+      this.loading = true;
       getCommentsApi({
         entity_uuid: this.entityuuid,
         entity_type: this.entitytype,
         page: this.page,
-        pagenum: this.pagenum
+        pagenum: this.pagenum,
       })
-        .then(res => {
-          console.log(res)
+        .then((res) => {
+          console.log(res);
           let newlist = res.msg.list;
           this.totalcomments = res.msg.total;
 
-          newlist.forEach(item => {
+          newlist.forEach((item) => {
             if (item.user.thumbnail_portait == null) {
               item.image = this.baseAppUrl + `icons/zhuce.png`;
             } else {
               item.image = this.baseUrl + "/" + item.user.thumbnail_portait;
             }
             item.newimages = [];
-            item.images.forEach(imgitem => {
+            item.images.forEach((imgitem) => {
               item.newimages.push(this.baseUrl + imgitem[0]);
+            });
+            item.subs.forEach((subitem) => {
+              if (subitem.user.thumbnail_portait == null) {
+                subitem.image = this.baseAppUrl + `icons/zhuce.png`;
+              } else {
+                subitem.image =
+                  this.baseUrl + "/" + subitem.user.thumbnail_portait;
+              }
+              subitem.newimages = [];
+              subitem.images.forEach((imgitem) => {
+                subitem.newimages.push(this.baseUrl + imgitem[0]);
+              });
             });
           });
           if (this.totalcomments > 0) {
@@ -365,16 +414,15 @@ export default {
         entity_type: this.entitytype,
         content: this.content,
         url: currentpath,
-        rate: this.rate
+        rate: this.rate,
       };
-      if(this.useruuid){
-        sendData.useruuid = this.useruuid
+      if (this.useruuid) {
+        sendData.useruuid = this.useruuid;
       }
 
-      if(this.datetime){
-        sendData.datetime = this.datetime
+      if (this.datetime) {
+        sendData.datetime = this.datetime;
       }
-
 
       if (this.pid) {
         sendData.puuid = this.pid ?? null;
@@ -385,22 +433,22 @@ export default {
       modifyCommentApi(sendData)
         .then(({ uuid }) => {
           if (this.fileList.length) {
-            const PARAMS = this.fileList.map(e => {
+            const PARAMS = this.fileList.map((e) => {
               return {
                 file: e.raw,
                 uuid,
                 method: "put",
-                name: e.name
+                name: e.name,
               };
             });
-            const requestList = PARAMS.map(e => {
+            const requestList = PARAMS.map((e) => {
               const formData = new FormData();
               Object.entries(e).forEach(([k, v]) => {
                 formData.append(k, v);
               });
               return formData;
             });
-            return axios.all(requestList.map(e => uploadFile(e)));
+            return axios.all(requestList.map((e) => uploadFile(e)));
           }
           return Promise.resolve();
         })
@@ -411,17 +459,17 @@ export default {
         .finally(() => {
           this.isSubmitLoading = false;
         });
-    }, 
+    },
     getCount() {
       // 获得阅读数
       getCountApi({
         entity_uuid: this.entityuuid,
-        entity_type: this.entitytype
+        entity_type: this.entitytype,
       }).then(({ msg }) => {
         this.count = msg;
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -431,7 +479,7 @@ $base-color: #ff8000;
 $border-color-light: #ebeef5;
 $font-color-light: #909399;
 $uni-color-error: #dd524d;
-.rate{
+.rate {
   margin-top: 20px;
 }
 .vmain {
@@ -638,51 +686,30 @@ $uni-color-error: #dd524d;
     }
   }
 
-  .likes {
-    display: flex;
-    border-bottom: 1px solid $base-color;
-    margin-top: 25px;
-    padding-bottom: 25px;
-    .tags {
-      margin-right: 10px;
-      border-right: 1px solid $border-color-light;
-      padding-right: 10px;
-      .zanimg {
-        width: 20px;
-        height: 20px;
-      }
-      .zantxt {
-        text-align: center;
-        color: $base-color;
-        font-weight: bold;
-      }
-    }
-    .holder {
-      display: flex;
-      flex-flow: row wrap;
-      .likeitem {
-        padding-right: 8px;
-        .likeimg {
-          width: 50px;
-          height: 50px;
-          border-radius: 6px;
-          // border: 1px solid $border-color-base;
-          // box-shadow: 0px 0px 5px $border-color-base;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
-        }
-        .username {
-          text-align: center;
-          color: $font-color-light;
-          font-weight: bold;
-        }
-      }
-    }
-  }
   .dialog-footer {
     display: flex;
     justify-content: flex-end;
   }
 }
+
+.subs{
+  .commentitem{
+    .commentimg{
+      .userimg{
+            width: 40px !important;
+            height: 40px  !important;
+            border-radius: 6px;
+            // border: 1px solid $border-color-base;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12),
+              0 0 6px rgba(0, 0, 0, 0.04);
+          }
+    }
+  }
+        
+  
+}
+ 
+    
 </style>
 
 <style lang="scss">
