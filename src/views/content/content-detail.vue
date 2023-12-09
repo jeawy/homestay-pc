@@ -24,7 +24,7 @@
       <div class="detail-items">
         <LikesReadComment
           :entityuuid="$route.query.id"
-          :entitytype="9"
+          :entitytype="CONTENTTYPE"
           :baseUrl="`https://shopdemo.chidict.com/images/`"
           :baseAppUrl="`https://shopdemo.chidict.com/app/`"
           :owneruuid="result.creator_info.uuid"
@@ -41,7 +41,7 @@ import { getNoticesApi } from "@/api/content";
 import LikesReadComment from "./components/LikesReadComment";
 
 import dayjs from "dayjs";
-
+const CONTENTTYPE = 18
 export default {
   name: "messageDetail",
   components: {

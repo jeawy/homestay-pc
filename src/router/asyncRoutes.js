@@ -65,6 +65,7 @@ export default function asyncRoutes(params) {
       path: "/card",
       component: Layout,
       redirect: "noRedirect",
+      hidden:true,
       meta: {
         title: "购物卡管理",
         icon: "content"
@@ -101,11 +102,11 @@ export default function asyncRoutes(params) {
       ]
     },
     {
-      path: "/product-manage",
+      path: "/room-manage",
       component: Layout,
       redirect: "noRedirect",
       meta: {
-        title: "商品管理",
+        title: "民宿",
         icon: "gift"
       },
       children: [
@@ -118,15 +119,7 @@ export default function asyncRoutes(params) {
             icon: "gift"
           }
         },
-        {
-          path: "product-manage",
-          name: "product-manage",
-          component: () => import("@/views/product-manage"),
-          meta: {
-            title: "商品展示",
-            icon: "gift"
-          }
-        },
+        
         {
           path: "add-room",
           name: "add-room",
@@ -145,7 +138,28 @@ export default function asyncRoutes(params) {
             title: "添加民宿图片",
             icon: "gift"
           }
-        },
+        }, 
+      ]
+    }, 
+    {
+      path: "/product-manage",
+      component: Layout,
+      redirect: "noRedirect",
+      meta: {
+        title: "商品管理",
+        icon: "gift"
+      },
+      children: [ 
+        {
+          path: "product-manage",
+          name: "product-manage",
+          component: () => import("@/views/product-manage"),
+          meta: {
+            title: "商品展示",
+            icon: "gift"
+          }
+        }, 
+        
         {
           path: "add-product",
           name: "add-product",
@@ -153,6 +167,17 @@ export default function asyncRoutes(params) {
           meta: {
             title: "添加其他商品",
             icon: "gift"
+          }
+        }, 
+        {
+          path: "product-detail",
+          name: "product-detail",
+          hidden: true,
+
+          component: () => import("@/views/product-manage/product-detail"),
+          meta: {
+            title: "详情",
+            icon: "content"
           }
         },
         {

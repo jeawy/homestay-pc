@@ -222,7 +222,7 @@ export default {
     },
     targetDetail(uuid) {
       this.$router.push({
-        name: "commodity-detail",
+        name: "product-detail",
         query: {
           uuid,
         },

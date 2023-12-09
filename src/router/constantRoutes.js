@@ -39,16 +39,7 @@ export default [
       icon: 'tree-table',
     },
     hidden: true,
-    children: [{
-      path: 'product-detail/:uuid',
-      name: 'product-detail',
-      component: () =>
-        import('@/views/product-manage/product-detail'),
-      meta: {
-        title: '商品详情',
-        icon: 'tree',
-      }
-    },
+    children: [ 
     {
       path: 'edit-content/:id',
       name: 'alter-gifts',
