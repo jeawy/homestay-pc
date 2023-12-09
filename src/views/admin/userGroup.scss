@@ -45,3 +45,15 @@
 ::-webkit-scrollbar {
     display: none;
 }
+
+/deep/  .upload-demo { 
+    .el-upload-dragger {
+      width: 190px !important;
+      height: 190px !important;
+      margin-right:15px;
+      .el-icon-upload {
+        font-size: 40px;
+        margin-top: 20px;
+      } 
+    }
+  } 

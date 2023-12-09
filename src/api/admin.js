@@ -127,12 +127,17 @@ export function deleteUser(data) {
 
 //物业移除员工用户
 export function removeStaff(data) {
-  return AXIOS.post('/users/community/?delete', data)
+  return AXIOS.post('/users/list/?delete', data)
 }
 
 //物业添加员工用户
 export function addStaff(data) {
-  return AXIOS.post('/users/community/', data)
+  return AXIOS.post('/users/list/', data, 
+  {
+    headers: {
+        'Content-Type': 'multipart/form-data;charset=UTF-8',
+    }
+  } )
 }
 
 

@@ -12,24 +12,15 @@
         <el-table-column type="selection" :reserve-selection="true" width="55px"></el-table-column>
         <el-table-column label="头像" width="80" align="center">
           <template slot-scope="scope">
-            <el-avatar size="small">{{scope.row.username | avatarFormat}}</el-avatar>
+            <el-image v-if="scope.row.thumbnail_portait" :src="baseUrl+'/images/'+scope.row.thumbnail_portait" 
+            size="small"></el-image>
+            <el-avatar size="small" v-else>{{scope.row.username | avatarFormat}}</el-avatar>
           </template>
         </el-table-column>
-         <el-table-column prop="username" label="姓名" align="left" class-name="links" width="120px">
-          <template slot-scope="scope">
-            <el-input
-              size="small"
-              v-model="scope.row.username"
-              placeholder="请输入用户名"
-              v-if="editing&&clickId === scope.row.id"
-              @change="showEditIcon"
-            >
-              <span>{{scope.row.username}}</span>
-            </el-input>
-            <span
-              v-if="!editing||clickId !== scope.row.id"
-              @click="showDrawer(scope.row)"
-            >{{scope.row.username}}</span>
+         <el-table-column prop="username" label="姓名" align="left" 
+         class-name="links" width="120px">
+          <template slot-scope="scope"> 
+              <span>{{scope.row.username}}</span>  
           </template>
         </el-table-column>
         <el-table-column prop="sex" label="性别" align="center" width="150">
@@ -45,20 +36,7 @@
             <span v-if="!editing||clickId !== scope.row.id">{{scope.row.sex}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" align="left" width="200px">
-          <template slot-scope="scope">
-            <el-input
-              size="small"
-              v-model="scope.row.email"
-              placeholder="请输入邮箱"
-              v-if="editing&&clickId === scope.row.id"
-              @change="showEditIcon"
-            >
-              <span>{{scope.row.email}}</span>
-            </el-input>
-            <span v-if="!editing||clickId !== scope.row.id">{{scope.row.email}}</span>
-          </template>
-        </el-table-column>
+      
         <el-table-column prop="phone" label="电话" align="left">
           <template slot-scope="scope">
             <el-input
@@ -73,28 +51,19 @@
             <span v-if="!editing||clickId !== scope.row.id">{{scope.row.phone}}</span>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="dept" label="部门" align="left">
+        <el-table-column prop="virtual" label="虚拟用户" align="left">
           <template slot-scope="scope">
-            <div style="float:left;padding:5px" v-for="(item,index) of scope.row.dept" :key="index">
-              <span @click="jump(item.id)" style="cursor: pointer">{{item.name}}</span>
-            </div>
+           <div v-if="scope.row.virtual == 1">是</div>
+           <div v-else>否</div>
           </template>
         </el-table-column>
-        <el-table-column prop="role" label="职务/角色" align="left" />-->
-       <!-- <el-table-column label="是否启用" align="center" width="100">
+        
+         <el-table-column label="是否启用" align="center" >
           <template slot-scope="scope">
-           <el-checkbox v-model="scope.row.is_active" disabled></el-checkbox> 
-         <div v-if="!editing||clickId !== scope.row.id">
-              <i v-if="scope.row.is_active" class="el-icon-check"></i>
-              <i v-else class="el-icon-close"></i>
-            </div>
-            <el-switch
-              @change="showEditIcon"
-              v-model="scope.row.is_active"
-              v-if="editing&&clickId === scope.row.id"
-            ></el-switch>
+            <div v-if="scope.row.is_active == 1">是</div>
+             <div v-else>否</div>
           </template>
-        </el-table-column>  -->
+        </el-table-column>  
 
         <el-table-column label="操作" align="center" show-overflow v-if="perssion">
           <template slot-scope="scope"> 
@@ -193,6 +162,7 @@ export default {
       editing: false,
       clickId: null,
       iconShow: false,
+      baseUrl: process.env.VUE_APP_BASE_IMAGE ,
       multipleSelection: [],
       drawer: false,
       project: null,
@@ -242,20 +212,7 @@ export default {
       this.iconShow = true;
     },
     editUser(row) {
-      if (this.iconShow === true) {
-        this.$confirm("当前修改未保存", "注意", {
-          // confirmButtonText: "确定",
-
-          // concelButtonText: "取消",
-
-          type: "warning"
-        });
-      } else {
-        this.editing = true;
-        this.clickId = row.id;
-      }
-      // console.log("edit");
-      // console.log(index);
+      this.$emit('editUser', row);
     },
     //移除单个用户
     deleteUser(id) {
@@ -264,12 +221,9 @@ export default {
         confirmButtonText: "确认", 
         type: "warning"
       }).then(() => {
-         let communityuuid = this.$route.query.communityuuid 
-      if (typeof( communityuuid) == "undefined"){ 
-         communityuuid = localStorage.getItem("communityuuid")
-      } 
+        
       console.log(id)
-        removeStaff({ ids: id, method: "delete", communityuuid: communityuuid }).then(({ data }) => {
+        removeStaff({ ids: id, method: "delete"  }).then(({ data }) => {
           if (data.status === 0) {
             
             this.$notify({
@@ -303,17 +257,13 @@ export default {
         type: "warning"
       }).then(() => {
         this.iconShow = false; 
-          let communityuuid = this.$route.query.communityuuid 
-      if (typeof( communityuuid) == "undefined"){ 
-         communityuuid = localStorage.getItem("communityuuid")
-      } 
+       
         editCommunityUserDetail({
           method: "put",
           id: row.id,
           username: row.username,
           email: row.email,
-          phone: row.phone,
-          communityuuid:communityuuid,
+          phone: row.phone, 
           isactive: row.is_active === true ? 1 : 0,
           sex: row.sex
         }).then(({ data }) => {
