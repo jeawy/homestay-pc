@@ -17,7 +17,7 @@
           <el-image class="likeimg" :src="item.image"></el-image>
           <div class="username">{{ item.user__username }}</div>
         </div>
-      </div>
+      </div> 
     </div>
     <div class="comments" v-loading="loading"  >
       <div class="tags">
@@ -41,6 +41,12 @@
               <div class="date">{{ item.date | timeFormat }}</div>
             </div>
             <div class="line2">
+              <el-rate
+                v-model="item.rate"
+                disabled 
+                show-text
+                text-color="#ff9900" >
+              </el-rate>
               <div class="content">{{ item.content }}</div>
               <div class="topimageholder" v-if="item.newimages.length">
                 <el-image
