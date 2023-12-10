@@ -20,7 +20,7 @@
       <div class="holder">
         <div class="commentitem" v-for="(item, index) in comments" :key="index">
           <div class="commentimg">
-            <el-image class="userimg" :src="item.image"></el-image>
+            <el-image class="userimg" :class="[item.comeway==0?'fakecomment':'']" :src="item.image"></el-image>
           </div>
           <div class="comment-content">
             <div class="line1">
@@ -71,7 +71,7 @@
                 :key="subindex"
               >
                 <div class="commentimg">
-                  <el-image class="userimg" :src="subitem.image"></el-image>
+                  <el-image class="userimg" :class="[subitem.comeway==0?'fakecomment':'']" :src="subitem.image"></el-image>
                 </div>
                 <div class="comment-content">
                   <div class="line1">
@@ -481,6 +481,10 @@ $font-color-light: #909399;
 $uni-color-error: #dd524d;
 .rate {
   margin-top: 20px;
+}
+
+.fakecomment{
+  border:1px solid $uni-color-error;
 }
 .vmain {
   width: 500px;
