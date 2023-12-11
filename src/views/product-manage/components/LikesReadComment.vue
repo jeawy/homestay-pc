@@ -24,23 +24,42 @@
           </div>
           <div class="comment-content">
             <div class="line1">
-              <div class="username">
+              <div class="left">
+                <div  class="username">
                 <span class="name">{{ item.user.username }}</span>
                 <span v-if="item.parent" class="txt">回复</span>
                 <span v-if="item.parent" class="username parent">{{
                   item.parent
                 }}</span>
+                </div>
+                <div class="date">{{ item.date | timeFormat }}</div>
               </div>
-              <div class="date">{{ item.date | timeFormat }}</div>
+              <div class="rates_result">
+                <div class="rates_result_total">
+                  <div class="score">{{(item.real_rate + item.service_rate +item.health_rate +item.location_rate )/4}}<label class="unit">分</label></div>
+                  <el-rate
+                    :value="(item.real_rate + item.service_rate +item.health_rate +item.location_rate )/4"
+                    disabled
+                    show-text
+                    text-color="#ff9900" 
+                  >
+                  </el-rate>
+                </div>
+                <div class="rate_right">
+                  <div class="rateline">
+                    <div class="ratetitle">实拍度:</div><div class="ratevalue">{{ item.real_rate }}</div>
+                    <div class="ratetitle">服务:</div><div class="ratevalue">{{ item.service_rate }}</div>
+                  </div>
+                  <div class="rateline">
+                    <div class="ratetitle">卫生:</div><div class="ratevalue">{{ item.health_rate }}</div>
+                    <div class="ratetitle">位置:</div><div class="ratevalue">{{ item.location_rate }}</div>
+                  </div>
+                </div>
+              </div>
+              
             </div>
             <div class="line2">
-              <el-rate
-                v-model="item.rate"
-                disabled
-                show-text
-                text-color="#ff9900"
-              >
-              </el-rate>
+              
               <div class="content">{{ item.content }}</div>
               <div class="topimageholder" v-if="item.newimages.length">
                 <el-image
@@ -76,13 +95,27 @@
                 <div class="comment-content">
                   <div class="line1">
                     <div class="username">
-                      <span class="name">{{ subitem.user.username }}</span>
-                      <span v-if="subitem.parent" class="txt">回复</span>
-                      <span v-if="subitem.parent" class="username parent">{{
-                        subitem.parent
-                      }}</span>
+                      <div>
+                        <span class="name">{{ subitem.user.username }}</span>
+                        <span v-if="subitem.parent" class="txt">回复</span>
+                        <span v-if="subitem.parent" class="username parent">{{
+                          subitem.parent
+                        }}</span>
+                      </div>
+                      <div class="date">{{ subitem.date | timeFormat }}</div>
                     </div>
-                    <div class="date">{{ subitem.date | timeFormat }}</div>
+                    <div class="rates_result sub_rates_result"> 
+                      <div class="rate_right  ">
+                        <div class="rateline">
+                          <div class="ratetitle">实拍度:</div><div class="ratevalue">{{ subitem.real_rate }}</div>
+                          <div class="ratetitle">服务:</div><div class="ratevalue">{{ subitem.service_rate }}</div>
+                        </div>
+                        <div class="rateline">
+                          <div class="ratetitle">卫生:</div><div class="ratevalue">{{ subitem.health_rate }}</div>
+                          <div class="ratetitle">位置:</div><div class="ratevalue">{{ subitem.location_rate }}</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div class="line2">
                     <div class="content">{{ subitem.content }}</div>
@@ -140,8 +173,25 @@
           size=".el-input--mini"
           :autosize="{ minRows: 3, maxRows: 6 }"
         />
-
-        <el-rate class="rate" v-model="rate" show-text> </el-rate>
+        <div class="rates">
+          <div class="rateitem">
+            <div class="ratetitle">实拍度:</div>
+            <el-rate class="rate" v-model="real_rate" show-text> </el-rate>
+          </div>
+          <div class="rateitem">
+            <div class="ratetitle">服务:</div>
+            <el-rate class="rate" v-model="service_rate" show-text> </el-rate>
+          </div>
+          <div class="rateitem">
+            <div class="ratetitle">卫生:</div>
+            <el-rate class="rate" v-model="health_rate" show-text> </el-rate>
+          </div>
+          <div class="rateitem">
+            <div class="ratetitle">位置:</div>
+            <el-rate class="rate" v-model="location_rate" show-text> </el-rate>
+          </div>
+        </div>
+        
         <div class="appraisetxt">不选择时间时，默认当前</div>
         <el-date-picker
           v-model="datetime"
@@ -246,7 +296,13 @@ export default {
       nomore: false,
       loading: false,
       count: 0, //阅读数
-      rate: null,
+      rate: 5,
+
+      real_rate:5,
+      service_rate: 5, 
+      health_rate: 5,
+      location_rate:4,
+
       fileList: [],
       content: "",
       datetime: "",
@@ -415,6 +471,10 @@ export default {
         content: this.content,
         url: currentpath,
         rate: this.rate,
+        real_rate: this.real_rate,
+        service_rate: this.service_rate,
+        health_rate: this.health_rate,
+        location_rate: this.location_rate,
       };
       if (this.useruuid) {
         sendData.useruuid = this.useruuid;
@@ -479,8 +539,58 @@ $base-color: #ff8000;
 $border-color-light: #ebeef5;
 $font-color-light: #909399;
 $uni-color-error: #dd524d;
-.rate {
-  margin-top: 20px;
+ 
+.rates_result{
+  border:1px solid #bfbfbf;
+  border-radius: 5px;
+  width: 280px;
+  display: flex;
+  .rates_result_total{
+    width:  150px;
+    .score{
+      font-weight: bold;
+    }
+    .unit{
+      font-size: 8px;
+    }
+  }
+  .rate_right{
+    border-left:1px solid #bfbfbf;
+    .rateline{
+      display: flex;
+      width: 130px;
+      
+      .ratetitle{
+        width: 65px;
+      }
+      .ratevalue{
+        width: 20px;
+        color:$uni-color-error;
+      }
+    }
+  }
+  .rates_result_total{
+    text-align: center;
+    .unit{
+      font-size: 10px;;
+    }
+  }
+}
+
+.sub_rates_result{
+  width: 130px;
+}
+.rates {
+  margin-top: 15px;
+  margin-bottom:  15px;;
+  .rateitem{
+    display: flex;
+    .ratetitle{
+      text-align: right;
+      width:50px;;
+      margin-right: 10px;
+    }
+  }
 }
 
 .fakecomment{
@@ -599,10 +709,11 @@ $uni-color-error: #dd524d;
       .commentitem {
         width: 100%;
         display: flex;
-        gap: 0 16px;
+        
         border-bottom: 1px solid $border-color-light;
         .commentimg {
           .userimg {
+            margin-right: 5px;
             width: 50px;
             height: 50px;
             border-radius: 6px;
@@ -615,9 +726,9 @@ $uni-color-error: #dd524d;
           flex: 1 1 auto;
           .line1 {
             display: flex;
-            justify-content: space-between;
-            .username {
-              display: flex;
+            justify-content: space-between; 
+            .username {  
+              text-align: left;
               .txt {
                 margin: 0 8px;
                 color: #303133;
