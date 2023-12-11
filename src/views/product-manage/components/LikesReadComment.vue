@@ -39,7 +39,7 @@
                   <div class="score">{{(item.real_rate + item.service_rate +item.health_rate +item.location_rate )/4}}<label class="unit">分</label></div>
                   <el-rate
                     :value="(item.real_rate + item.service_rate +item.health_rate +item.location_rate )/4"
-                    disabled
+                    disabled 
                     show-text
                     text-color="#ff9900" 
                   >
@@ -543,7 +543,7 @@ $uni-color-error: #dd524d;
 .rates_result{
   border:1px solid #bfbfbf;
   border-radius: 5px;
-  width: 280px;
+  width: 290px;
   display: flex;
   .rates_result_total{
     width:  150px;
@@ -807,6 +807,9 @@ $uni-color-error: #dd524d;
   }
 }
 
+.star{
+  border:1px solid red;
+}
 .subs{
   .commentitem{
     .commentimg{

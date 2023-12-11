@@ -10,8 +10,27 @@
             <div class="msg-title" :title="result.title" >
               {{ result.title }}
             </div>
-            <div class="prices">
+            <div class="prices"  v-if="result.producttype == 0">
               <Calendar :productuuid="$route.query.uuid"></Calendar>
+            </div> 
+            <div class="prices"  v-else>
+              <el-table 
+                  :data="result.specifications"
+                  border
+                  :stripe="true"
+                  :header-cell-style="{
+                    'font-size': '12px',
+                    background: '#eef1f6',
+                    color: '#606266',
+                  }"
+                  highlight-current-row
+                  row-class-name="hover" 
+                >
+                <el-table-column    prop="price"  label="价格"> </el-table-column>
+                <el-table-column    prop="name"  label="规格"> </el-table-column>  
+                <el-table-column    prop="number"  label="库存"> </el-table-column>   
+              </el-table>
+                
             </div> 
             <div v-html="result.content" width="100%"></div>
             
@@ -19,7 +38,7 @@
         </div>
       </div>
 
-      <div class="detail-items">
+      <div class="detail-items"> 
         <LikesReadComment
           :entityuuid="uuid"
           :entitytype="9"
