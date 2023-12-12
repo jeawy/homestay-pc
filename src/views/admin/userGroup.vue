@@ -7,11 +7,26 @@
             
             <el-input
               placeholder="输入姓名搜索"
-              v-model="filterText"
+              v-model="queryForm.username"
               prefix-icon="el-icon-search"
               style="width:200px;margin-right:10px"
-            ></el-input>总数：
-            <label for style="color:#ed4014">{{ dealUserCount }}</label>
+            ></el-input>
+            
+            <el-radio-group v-model="queryForm.virtual">
+              <el-radio :label="-1">全部</el-radio> 
+              <el-radio :label="0">真实用户</el-radio>
+              <el-radio :label="1">虚拟用户</el-radio>
+            </el-radio-group>
+            <el-button-group>
+            <el-button type="primary" @click="getAllUserlist">
+              查询
+            </el-button>
+            <el-button type="primary" plain @click="resetParams">
+              重置
+            </el-button>
+          </el-button-group>
+            总数：
+            <label for style="color:#ed4014">{{ total }}</label>
           </el-row> 
           <el-row type="flex" align="middle">
             <template v-if="perssion">
@@ -32,15 +47,83 @@
           </el-row>
         </el-row>
       </el-header>
-      <el-main style="padding: 0px">
-        <users-table
-          :UserList="UserList"
-          :perssion="perssion"
-          :tableLoading="tLoading"
-          @refresh="getAllUserlist"
-          @selection="handleSelectionChange"
-          @editUser="editUser"
-        ></users-table>
+      <el-main style="padding: 0px"> 
+        <el-table
+        :data="UserList"
+        v-loading="tLoading"
+        style="width: 100%"
+        highlight-current-row
+        @selection-change="handleSelectionChange"
+        :row-key="({row,$index})=>$index"
+      >
+        <el-table-column type="selection" :reserve-selection="true" width="55px"></el-table-column>
+        <el-table-column label="头像" width="80" align="center">
+          <template slot-scope="scope">
+            <el-image v-if="scope.row.thumbnail_portait" :src="baseUrl+'/images/'+scope.row.thumbnail_portait" 
+            size="small"></el-image>
+            <el-avatar size="small" v-else>{{scope.row.username | avatarFormat}}</el-avatar>
+          </template>
+        </el-table-column>
+         <el-table-column prop="username" label="姓名" align="left" 
+         class-name="links"  >
+          <template slot-scope="scope"> 
+              <span>{{scope.row.username}}</span>  
+          </template>
+        </el-table-column>
+        <el-table-column prop="sex" label="性别" align="center" width="150">
+          <template slot-scope="scope"> 
+            <span >{{scope.row.sex}}</span>
+          </template>
+        </el-table-column>
+      
+        <el-table-column prop="phone" label="电话" align="left">
+          <template slot-scope="scope"> 
+            <span >{{scope.row.phone}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="virtual" label="虚拟用户" align="left">
+          <template slot-scope="scope">
+           <div v-if="scope.row.virtual == 1">是</div>
+           <div v-else>否</div>
+          </template>
+        </el-table-column>
+        
+         <el-table-column label="是否启用" align="center" >
+          <template slot-scope="scope">
+            <div v-if="scope.row.is_active == 1">是</div>
+             <div v-else>否</div>
+          </template>
+        </el-table-column>  
+
+        <el-table-column label="操作" align="center" show-overflow v-if="perssion">
+          <template slot-scope="scope">  
+            <el-tooltip effect="dark" content="修改" placement="top">
+              <el-button
+                
+                type="primary"
+                icon="el-icon-edit"
+                @click="editUser(scope.row)"
+              />
+            </el-tooltip> 
+            <el-tooltip effect="dark" content="移除" placement="top">
+              <el-button type="danger" icon="el-icon-delete" @click="deleteUser(scope.row.id)" />
+            </el-tooltip>
+ 
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div class="block" style="text-align: right;margin-top:10px">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="pageSizeList"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        ></el-pagination>
+      </div>
       </el-main>
     </el-container>
     <el-dialog :visible.sync="dialogShow1" :title="dialogName" width="400px">
@@ -166,15 +249,22 @@ export default {
       }
     };
     return {
+      total:0,
+      currentPage: 1,
+       pageSize: 20,
+       pageSizeList: [10, 20, 50, 100],
       tLoading:false,
       radio: 1, 
-      filterText: "",
+      queryForm:{
+        username: "",
+        virtual:-1
+      }, 
+      
       UserList: [],
       dialogShow1: false,
       dialogShow2: false,
       dialogName: null,
-      perssion: true,
-      dealUserCount: 0,
+      perssion: true, 
       SRC:"",
       baseUrl: process.env.VUE_APP_BASE_IMAGE +"/images/",
       userForm: {
@@ -201,18 +291,27 @@ export default {
       formfileData:null
     };
   },
-
-  // computed: {
-  //   ...mapState('admin',['UserList'])
-  // },
-
-
+ 
   methods: {
+    resetParams(){
+      this.queryForm={
+        username: "",
+        virtual:-1
+      }
+      this.currentPage = 1
+      this.getAllUserlist()
+    },
+    handleSizeChange(val) {
+       this.pageSize = val; 
+     },
+    handleCurrentChange(currentPage) {
+       this.currentPage = currentPage; 
+       this.getAllUserlist()
+    },
     handleAvatarSuccessMainPic(file){
       this.SRC = URL.createObjectURL(file.raw);
     },
-    HandleImg(param){  
-      console.log(param)
+    HandleImg(param){   
       this.formfileData.append("img", param.file) 
     },
     batchImport(){
@@ -280,10 +379,15 @@ export default {
     },
     getAllUserlist() {
       this.tLoading = true 
-      getUserList( ).then( res => {
-       
-        this.UserList = res.data;
-        this.dealUserCount = this.UserList.length;
+      let param = {
+        ...this.queryForm, 
+        page: this.currentPage,
+        pagenum: this.pageSize
+      }
+      getUserList(param ).then( ({data}) => {
+        console.log(data)
+        this.UserList =  data.msg.list;
+        this.total =  data.msg.total;
         this.tLoading = false;
        
       }).catch(()=>{
@@ -430,18 +534,7 @@ export default {
           this.getNullDeptUser();
           break;
       }
-    },
-    filterText: {
-      handler: function(newVal, oldVal) {
-        if (newVal) { 
-          getUserList({ username: newVal }).then(res=> {
-            this.UserList = res.data;
-          });
-        } else {
-          this.getAllUserlist();
-        }
-      }
-    }
+    }, 
   },
 
   created() { 

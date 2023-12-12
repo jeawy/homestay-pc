@@ -342,6 +342,7 @@ export default {
     getUsers() {
       let param = {
         virtual: 1,
+        simple:1
       };
       getUserList(param).then(({ data }) => {
         console.log(data);
