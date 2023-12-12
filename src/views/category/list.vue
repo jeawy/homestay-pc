@@ -362,7 +362,9 @@ export default {
       this.dialogName = "添加类别";
       this.dialogShow = true;
       this.actForm.sort = 1
-      this.actForm.categorytype = 0
+      //解决第二次打开没有办法选中的bug，原因：把选中的值写在对象里面，直接赋值导致的问题
+      this.$set(this.actForm, 'categorytype', 0) 
+      //this.actForm.categorytype = 0
     },
     //添加类别
     addAct(actForm) {
@@ -374,7 +376,8 @@ export default {
       this.dialogName = "添加子类别";
       this.dialogShow = true;
       this.actForm.sort = 1
-      this.actForm.categorytype = 0
+      this.$set(this.actForm, 'categorytype', 0) 
+   
     },
     //关闭添加类别弹出框
     cancel() {
