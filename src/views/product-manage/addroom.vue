@@ -30,7 +30,7 @@
             <template v-else>
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
-                民宿封面图，或
+                {{producttxt}}封面图，或
                 <em>点击上传</em>
               </div>
             </template>
@@ -53,12 +53,12 @@
             <template v-else>
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
-                民宿封面视频，或
+                {{producttxt}}封面视频，或
                 <em>点击上传</em>
               </div>
             </template>
           </el-upload>
-          <div >
+          <div v-if="producttype == 0">
               <el-form-item label-width="45px"  label="面积:" prop="area">
                 <el-input
                   v-model="addProductsForm.area" 
@@ -103,6 +103,7 @@
                 ></el-input>
               </el-form-item>
           </div>
+          
         </div>
         
         <div>
@@ -114,23 +115,23 @@
               :props="{ checkStrictly: true }"
             >
             </el-cascader>
-            <el-form-item label="民宿标题" prop="title">
+            <el-form-item label="标题" prop="title">
               <el-input v-model="addProductsForm.title"></el-input>
             </el-form-item>
 
             <el-checkbox v-model="ready" class="book">立即上架</el-checkbox>
             <el-checkbox v-model="recommend" class="book"
-              >设为推荐民宿</el-checkbox
+              >设为推荐{{producttxt}}</el-checkbox
             >
           </div>
           <div style="display: flex">
-            <el-form-item label="户型:" label-width="45px" prop="housetype">
-              <el-input v-model="addProductsForm.housetype" maxlength="10" placeholder="两室一厅" style="width: 120px;"></el-input>
+            <el-form-item   :label="producttype==0?'户型':'车型'" label-width="45px" prop="housetype">
+              <el-input v-model="addProductsForm.housetype" maxlength="10"  style="width: 120px;"></el-input>
             </el-form-item>
-            <el-form-item label="最多入住人数" label-width="110px" prop="maxlivers">
+            <el-form-item :label="producttype==0?'最多入住人数':'最多乘坐人数'" label-width="110px" prop="maxlivers">
               <el-input v-model="addProductsForm.maxlivers" style="width: 100px;" min="1" type="number"></el-input>
             </el-form-item>
-            <el-form-item label="房屋特色" prop="lighlight">
+            <el-form-item label="特色" prop="lighlight">
               <el-input v-model="addProductsForm.lighlight" maxlength="50" style="width: 250px;"></el-input>
             </el-form-item> 
           </div>
@@ -143,7 +144,7 @@
             {{tag.name}}
           </el-tag>
           <div style="display: flex">
-            <el-form-item label="房屋标签:" label-width="80px" prop="newtag"> 
+            <el-form-item label="标签:" label-width="80px" prop="newtag"> 
               <el-tag
                 :key="index"
                 v-for="(tag, index) in  newtags"
@@ -165,8 +166,45 @@
               <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 新标签</el-button>
             </el-form-item> 
           </div>
-          <div class="title">房价设置:</div>
-          <p style="color:#bfbfbf">提示:只设置最近6个月工作日、周末及节假日的房价</p>
+          <div v-if="producttype==2">
+            <div class="button"  >
+              <el-button
+                type="primary" 
+                @click.prevent="addRow()"
+              > 添加服务</el-button> 
+              <el-button type="danger" @click.prevent="batchDelete()">删除服务</el-button>
+            </div>
+            <div class="table">
+              <el-table
+                :data="tableData"
+                ref="multipleTable"
+                tooltip-effect="dark"
+                border
+                stripe 
+                @selection-change="handleSelectionChange"
+              >
+                <el-table-column type="selection" width="45" align="center"></el-table-column>
+                <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
+                <el-table-column label="名称" align="center">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.name"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="价格">
+                  <template slot-scope="scope">
+                    <el-input type="number" v-model="scope.row.price"  step="0.01" :min="0"></el-input>
+                  </template>
+                </el-table-column>  
+                <el-table-column label="备注">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.remark"></el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+          <div class="title">价格设置:</div>
+          <p style="color:#bfbfbf">提示:只设置最近6个月工作日、周末及节假日的价格</p>
           <div style="display: flex">
             <el-form-item label="工作日价格:" prop="workday_price">
               <el-input
@@ -212,8 +250,8 @@
           <div style="margin-left: 20px;  width:500px">
              
             <div class="rules">
-              <div>入住须知</div>
-              <el-input v-model="addProductsForm.checkin_notice"  type="textarea" :rows="5" placeholder="入住须知"></el-input> 
+              <div>{{producttype==0?'入住':'租车'}}须知</div>
+              <el-input v-model="addProductsForm.checkin_notice"  type="textarea" :rows="5" placeholder="须知"></el-input> 
             </div>
             <div class="rules" >
               <div>对客要求</div>
@@ -273,13 +311,10 @@ export default {
       ready: false, // 立即上架
       recommend: false, //是否设为推荐民宿 
       tableData: [
-        {
-          // rowNum: "",
-          price: null,
-          coin: null,
-          name: null,
-          content: null,
-          number: null,
+        { 
+          price: null,  
+          name: null, 
+          remark: null,
         },
       ],
       multipleSelection: [],
@@ -337,7 +372,10 @@ export default {
         Authorization: `JWT ${getToken()}`,
       },
       category: "",
-      formfileData:null
+      formfileData:null,
+      producttype:0,//0 民宿 ，2 租车
+      producttxt:"民宿",
+      taglabel:"homestay"
     };
   },
   components: {
@@ -352,14 +390,48 @@ export default {
     if (this.$route.query.uuid) { 
       this.uuid = this.$route.query.uuid; 
       this.getviewProducts();
-    } else {
-    }
+    } 
+    this.producttype = "2"
+    if (this.$route.query.producttype) { 
+      this.producttype = this.$route.query.producttype;  
+    } 
+    if(this.producttype == "2"){
+        this.producttxt = "租车"
+      }
+    
     this.getCategoryList(); 
     this.formfileData = new FormData()
     
   },
 
   methods: {
+     // 删除方法
+    // 删除选中行
+    batchDelete() {
+      let multData = this.multipleSelection;
+      let tableData = this.tableData;
+      let multDataLen = multData.length;
+      let tableDataLen = tableData.length;
+      for (let i = 0; i < multDataLen; i++) {
+        for (let y = 0; y < tableDataLen; y++) {
+          if (JSON.stringify(tableData[y]) == JSON.stringify(multData[i])) {
+            //判断是否相等，相等就删除
+            this.tableData.splice(y, 1);
+          }
+        }
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    addRow() {
+      var list = { 
+        name: null,
+        price: null,  
+        remark: null
+      };
+      this.tableData.push(list);
+    },
     fastAddtag(tag){
       if (!( this.newtags.includes(tag.name))){
           this.newtags.push(tag.name)
@@ -433,7 +505,10 @@ export default {
           this.isbook = res.data.msg.isbook == 0 ? false : true; 
           this.ready = res.data.msg.ready == 0 ? false : true;
           this.recommend = res.data.msg.recommend == 0 ? false : true; 
-          this.tableData = this.addProductsForm.specifications;
+          if(this.addProductsForm.extras){
+            this.tableData = this.addProductsForm.extras; 
+          }
+          
           res.data.msg.tags.forEach((e)=>{
             this.newtags.push(e.name)
           })
@@ -459,7 +534,7 @@ export default {
     }, 
     getEditData(){
       // 数据格式化
-      this.formfileData.append("producttype", 0)
+      this.formfileData.append("producttype", this.producttype)
       this.formfileData.append("title", this.addProductsForm.title)
       this.formfileData.append("content", this.addProductsForm.content) 
 
@@ -520,6 +595,9 @@ export default {
       for (var key of this.formfileData.entries()) {
           console.log(key[0] + ', ' + key[1]);
       } 
+      if(this.tableData.length > 0){
+        this.formfileData.append("extras", JSON.stringify( this.tableData))
+      } 
     },
     //添加民宿，修改民宿
     submitForm(addProductsForm, tableData) {
@@ -579,9 +657,9 @@ export default {
       this.tableData = [];
     },
     getCategoryList() {
-      //获取民宿的类别
+      
       getCategory({
-        categorytype:0
+        categorytype:this.producttype
       }).then(({ data }) => {
         if (data.status == 0) {
           this.categoriesList = data.msg;
@@ -613,8 +691,12 @@ export default {
       });
     },
     getTags(){
+      
+      if(this.producttype==2){
+        this.taglabel = "car"
+      }
       let param = {
-        label:"product"
+        label: this.taglabel
       }
       getTagsApi(param).then(({data:{status, msg}})=>{ 
          this.history_tags = msg
@@ -626,7 +708,7 @@ export default {
   },
 };
 </script>
-<style lang='scss'      >
+<style lang='scss'   scoped   >
 .title {
   font-weight: 700;
   width: 100%;

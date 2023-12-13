@@ -142,6 +142,46 @@ export default function asyncRoutes(params) {
       ]
     }, 
     {
+      path: "/car-manage",
+      component: Layout,
+      redirect: "noRedirect",
+      meta: {
+        title: "车务",
+        icon: "gift"
+      },
+      children: [
+        {
+          path: "product-car",
+          name: "product-car",
+          component: () => import("@/views/product-manage/cars"),
+          meta: {
+            title: "租车",
+            icon: "gift"
+          }
+        },
+        
+        {
+          path: "add-car",
+          name: "add-car",
+          component: () => import("@/views/product-manage/addroom"),
+          meta: {
+            title: "发布租车信息",
+            icon: "gift"
+          }
+        },
+        {
+          path: "add-room-pic",
+          name: "add-room-pic",
+          hidden: true,
+          component: () => import("@/views/product-manage/addroompic"),
+          meta: {
+            title: "添加租车图片",
+            icon: "gift"
+          }
+        }, 
+      ]
+    }, 
+    {
       path: "/product-manage",
       component: Layout,
       redirect: "noRedirect",
