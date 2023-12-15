@@ -30,7 +30,7 @@
             <template v-else>
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
-                {{producttxt}}封面图，或
+               封面图，或
                 <em>点击上传</em>
               </div>
             </template>
@@ -53,7 +53,7 @@
             <template v-else>
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
-                {{producttxt}}封面视频，或
+                 封面视频，或
                 <em>点击上传</em>
               </div>
             </template>
@@ -121,7 +121,7 @@
 
             <el-checkbox v-model="ready" class="book">立即上架</el-checkbox>
             <el-checkbox v-model="recommend" class="book"
-              >设为推荐{{producttxt}}</el-checkbox
+              >设为推荐 </el-checkbox
             >
           </div>
           <div style="display: flex">
@@ -166,7 +166,7 @@
               <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 新标签</el-button>
             </el-form-item> 
           </div>
-          <div v-if="producttype==2">
+          <div >
             <div class="button"  >
               <el-button
                 type="primary" 
@@ -387,6 +387,7 @@ export default {
   //判断能否添加规格
   created() {
     this.getTags()
+    console.log(this.$route.query)
     if (this.$route.query.uuid) { 
       this.uuid = this.$route.query.uuid; 
       this.getviewProducts();
@@ -397,7 +398,10 @@ export default {
     } 
     if(this.producttype == "2"){
         this.producttxt = "租车"
-      }
+    }
+    else if(this.producttype == "1"){
+        this.producttxt = "景区"
+    }
     
     this.getCategoryList(); 
     this.formfileData = new FormData()

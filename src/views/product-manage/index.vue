@@ -3,18 +3,11 @@
     <el-row type="flex" justify="space-between">
       <el-form inline>
          <el-form-item label="商品类别">
-          <el-select filterable v-model="queryForm.category" style="width: 120px">
-            <el-option 
-              label="全部"
-              value="-1"
-            />
-            <el-option
-              v-for="item of categories"
-              :key="item.name"
-              :label="item.name"
-              :value="item.name"
-            />
-          </el-select>
+          <el-cascader filterable v-model="queryForm.category" placeholder="请选择商品类别"  
+              :options ="options"
+              :props="{checkStrictly: true }"
+              > 
+            </el-cascader>  
         </el-form-item> 
         <el-form-item label="商品标题">
           <el-input v-model="queryForm.title"  > </el-input>
@@ -196,7 +189,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[50, 150, 200, 300]"
+          :page-sizes="[5, 15, 20, 30]"
           :page-size="paginationsize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
@@ -208,8 +201,7 @@
 
 <script>
 import {
-  viewProducts, 
-  viewProductsClass, 
+  viewProducts,  
   deleteProduct
 } from "@/api/product"; 
 import {  getCategory } from "@/api/category";
@@ -217,16 +209,16 @@ export default {
   data() {
     return {
       baseImage:process.env.VUE_APP_BASE_IMAGE +"/images/",
-      giftList: [],
-      giftsClassList: [],
+      giftList: [], 
       dialogShow2: false,
-      paginationsize:50,
+      paginationsize:5,
       SRC: "", 
       total:100,
       queryForm:{
         selling:"1",
         producttype:1,
       },
+      options:[],
       categories:[],
       currentPage: 1,
        pageSize: 20,
@@ -265,18 +257,40 @@ export default {
     },
     getCategories(){
       let categorytypes = "1,10"
+      this.options = [{
+        value:-1,
+        label:"全部",
+        children:[]
+      }]
       getCategory({pc:"", categorytypes:categorytypes}).then(({data})=>{
         
           if(data.status == 0){
               this.categories = data.msg
-              console.log(data.msg)
+              let children = []
+              for(var i = 0; i < data.msg.length;i ++){
+                children = []
+                if (data.msg[i].sub.length > 0){
+                  for(var j = 0; j < data.msg[i].sub.length;j ++){
+                    children.push({
+                      value: data.msg[i].sub[j].id,
+                      label: data.msg[i].sub[j].name,
+                    })
+                  }
+                }
+                this.options.push(
+                  {
+                    value: data.msg[i].id,
+                    label: data.msg[i].name,
+                    children:children
+                  }
+                )
+              }
           }else{
               return false;
           }
       })
     }, 
-    handleQueryList(){ 
-      console.log(1111)
+    handleQueryList(){  
        this.currentPage = 1
        this.getviewProducts()
     },
@@ -320,18 +334,20 @@ export default {
       } else {
         this.queryForm.leftcount_prodcut  = 0;
       }
+    
+      let category = -1
+      if(this.queryForm.category && this.queryForm.category.length > 0){
+        category = this.queryForm.category[this.queryForm.category.length-1]
+      }
+      console.log(this.queryForm)
 
       viewProducts({...this.queryForm,
-      page:this.currentPage, pagenum:this.paginationsize}).then(({ data }) => { 
+        category:category,
+        page:this.currentPage, pagenum:this.paginationsize}).then(({ data }) => { 
         this.giftList = [...data.msg.list];
-        this.total = this.giftList.total
+        this.total = data.msg.total
       });
-    },
-    getProductsClass() {
-      viewProductsClass().then(({ data }) => {
-        this.giftsClassList = [...data.msg];
-      });
-    },
+    }, 
     readyProduct(item, ready=false) {
       let msg = "下架该商品，是否继续?"
       if (ready == true){
@@ -406,11 +422,12 @@ export default {
      
      handleSizeChange(val) {
        this.pageSize = val;
-
+       this.currentPage = 1 
+       this.getviewProducts()
      },
      handleCurrentChange(currentPage) {
        this.currentPage = currentPage;
-
+       this.getviewProducts()
     },
     // //解决索引旨在当前页排序的问题，增加函数自定义索引序号
      indexMethod(index) {
@@ -437,8 +454,7 @@ export default {
         this.queryForm.leftcount = true 
       }
     }
-    this.getviewProducts();
-    this.getProductsClass();
+    this.getviewProducts(); 
     this.getCategories()
   }
 };

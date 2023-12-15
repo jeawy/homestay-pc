@@ -22,7 +22,7 @@
             <template v-else  >
               <i class="el-icon-upload"></i>
               <div class="el-upload__text">
-                商品缩略图，或
+                封面图，或
                 <em>点击上传</em>
               </div>
             </template>
@@ -59,12 +59,12 @@
               :props="{checkStrictly: true }"
               > 
             </el-cascader> 
-            <el-form-item label="商品标题" prop="title">
+            <el-form-item label="标题" prop="title">
               <el-input v-model="addProductsForm.title"></el-input>
             </el-form-item>  
             <el-checkbox v-model="isbook"  class="book">预约商品</el-checkbox> 
             <el-checkbox v-model="ready"  class="book">立即上架</el-checkbox> 
-            <el-checkbox v-model="recommend"  class="book">设为推荐商品</el-checkbox>
+            <el-checkbox v-model="recommend"  class="book">设为推荐</el-checkbox>
             
           </div>
           <div style="display: flex"> 
@@ -80,7 +80,7 @@
             {{tag.name}}
           </el-tag>
           <div style="display: flex">
-            <el-form-item label="商品标签:" label-width="80px" prop="newtag"> 
+            <el-form-item label=" 标签:" label-width="80px" prop="newtag"> 
               <el-tag
                 :key="index"
                 v-for="(tag, index) in  newtags"
@@ -102,7 +102,47 @@
               <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 新标签</el-button>
             </el-form-item> 
           </div>
-          <div class="button"  >
+
+          <div  >
+            <div class="button"  >
+              <el-button
+                type="primary" 
+                @click.prevent="addExtraRow()"
+              > 添加服务</el-button> 
+              <el-button type="danger" @click.prevent="batchExtraDelete">删除服务</el-button>
+            </div>
+            <div class="table">
+              <el-table
+                :data="extras"
+                ref="multipleTable"
+                tooltip-effect="dark"
+                border
+                stripe 
+                @selection-change="handleExtraSelectionChange"
+              >
+                <el-table-column type="selection" width="45" align="center"></el-table-column>
+                <el-table-column label="序号" type="index" width="60" align="center"></el-table-column>
+                <el-table-column label="名称" align="center">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.name"></el-input>
+                  </template>
+                </el-table-column>
+                <el-table-column label="价格">
+                  <template slot-scope="scope">
+                    <el-input type="number" v-model="scope.row.price"  step="0.01" :min="0"></el-input>
+                  </template>
+                </el-table-column>  
+                <el-table-column label="备注">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.remark"></el-input>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+
+
+          <div class="button"  style="margin-top: 20px;" >
               <el-button
                 type="primary" 
                 @click.prevent="addRow()"
@@ -210,10 +250,8 @@ export default {
           number: null, 
         }
       ],
-      multipleSelection: [],
-
-      selectlistRow: [],
-
+      multipleSelection: [], 
+      selectlistRow: [], 
       giftList: [],
       giftsClassList: [],
       giftsSpecsList: [],
@@ -244,7 +282,16 @@ export default {
       headers: {
         Authorization: `JWT ${getToken()}`
       },
-      category:""
+      category:"",
+      producttype:10,//其他
+      extras: [
+        { 
+          price: null,  
+          name: null, 
+          remark: null,
+        },
+      ],
+      multipleExtraSelection:[]
     };
   },
   components: {
@@ -253,6 +300,9 @@ export default {
   name: "extra-audit",
   //判断能否添加规格 
   created(){
+    if(this.$route.query.producttype){
+      this.producttype = this.$route.query.producttype
+    }
     this.getCategoryList()
     this.formfileData = new FormData()
   },
@@ -298,12 +348,24 @@ export default {
       this.$refs.piclist.submit()
     },
     getTags(){
+      let label = "product"
+      if (this.producttype==1){
+        label = "ticket"
+      }
       let param = {
-        label:"product"
+        label: label
       }
       getTagsApi(param).then(({data:{status, msg}})=>{ 
          this.history_tags = msg
       })
+    },
+    addExtraRow(){
+      var list = { 
+        name: null,
+        price: null,  
+        remark: null
+      };
+      this.extras.push(list);
     },
     //添加行
     addRow() {
@@ -323,6 +385,20 @@ export default {
         this.tableData[row.$index].price = -this.tableData[row.$index].price
       }
     },
+    batchExtraDelete() {
+      let multData = this.multipleExtraSelection;
+      let tableData = this.extras;
+      let multDataLen = multData.length;
+      let tableDataLen = tableData.length;
+      for (let i = 0; i < multDataLen; i++) {
+        for (let y = 0; y < tableDataLen; y++) {
+          if (JSON.stringify(tableData[y]) == JSON.stringify(multData[i])) {
+            //判断是否相等，相等就删除
+            this.extras.splice(y, 1);
+          }
+        }
+      }
+    },
     // 删除方法
     // 删除选中行
     batchDelete() {
@@ -339,6 +415,10 @@ export default {
         }
       }
     },
+    handleExtraSelectionChange(val) {
+      this.multipleExtraSelection = val;
+    }, 
+
     handleSelectionChange(val) {
       this.multipleSelection = val;
     }, 
@@ -352,7 +432,7 @@ export default {
     },
     getEditData(){
       // 数据格式化 
-      this.formfileData.append("producttype", 1)//民宿以外的商品
+      this.formfileData.append("producttype", this.producttype)//民宿以外的商品
       this.formfileData.append("specifications", JSON.stringify( this.tableData))
       this.formfileData.append("title", this.addProductsForm.title)
       this.formfileData.append("content", this.addProductsForm.content) 
@@ -397,6 +477,11 @@ export default {
       } else { 
         this.formfileData.append("recommend", 0) 
       } 
+
+      if(this.extras.length > 0){
+        this.formfileData.append("extras", JSON.stringify( this.extras))
+      } 
+   
     },
 
     getviewProducts() { 
@@ -411,6 +496,10 @@ export default {
           this.shopcard = res.data.msg.gifttype == 0 ? false:true;
           this.ready = res.data.msg.ready == 0 ? false:true;
           this.recommend = res.data.msg.recommend == 0 ? false:true; 
+
+          if(this.addProductsForm.extras){
+            this.extras = this.addProductsForm.extras; 
+          }
           this.tableData = this.addProductsForm.specifications
           this.preMainPic = this.baseImage + this.addProductsForm.picture
           if ( this.addProductsForm.videopath){
@@ -485,6 +574,7 @@ export default {
     getCategoryList(){
       //获取商品的类别
       let categorytypes = "1,10" 
+      
       getCategory({pc:"", categorytypes:categorytypes}).then(({data})=>{ 
          if(data.status == 0){
            this.categoriesList = data.msg
@@ -530,7 +620,7 @@ export default {
 
     }  
     this.getProductsClass(); 
-    this.getTagsApi()
+    this.getTags()
   }
 };
 </script>

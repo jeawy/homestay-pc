@@ -112,6 +112,7 @@ export default function asyncRoutes(params) {
       children: [
         {
           path: "product-rooms",
+          params:'producttype=0',
           name: "product-rooms",
           component: () => import("@/views/product-manage/rooms"),
           meta: {
@@ -122,6 +123,7 @@ export default function asyncRoutes(params) {
         
         {
           path: "add-room",
+          params:'producttype=0',
           name: "add-room",
           component: () => import("@/views/product-manage/addroom?minsu"),
           meta: {
@@ -152,6 +154,7 @@ export default function asyncRoutes(params) {
       children: [
         {
           path: "product-car",
+          params:'producttype=2',
           name: "product-car",
           component: () => import("@/views/product-manage/cars"),
           meta: {
@@ -180,7 +183,7 @@ export default function asyncRoutes(params) {
           }
         }, 
       ]
-    }, 
+    },   
     {
       path: "/product-manage",
       component: Layout,

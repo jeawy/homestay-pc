@@ -383,6 +383,7 @@ export default {
     
   },
   created() {
+    console.log(this.$route.query)
     if (this.$route.query.index) {
       let index = parseInt(this.$route.query.index);
       if (index == 1) {
