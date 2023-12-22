@@ -386,14 +386,14 @@ export default {
   name: "extra-audit",
   //判断能否添加规格
   created() {
-    this.getTags()
-    console.log(this.$route.query)
+    this.getTags() 
     if (this.$route.query.uuid) { 
       this.uuid = this.$route.query.uuid; 
       this.getviewProducts();
     } 
     this.producttype = "2"
-    if (this.$route.query.producttype) { 
+    console.log(this.$route.query)
+    if (this.$route.query.producttype != "undefined") { 
       this.producttype = this.$route.query.producttype;  
     } 
     if(this.producttype == "2"){
@@ -463,8 +463,7 @@ export default {
       this.$refs.uploadvideo.submit() 
     },
     handleAvatarSuccessMainVideo(file){
-      this.priVideoPath = URL.createObjectURL(file.raw);
-      console.log(this.priVideoPath)
+      this.priVideoPath = URL.createObjectURL(file.raw); 
     },
     handleAvatarSuccessMainPic(file){
       this.preMainPic = URL.createObjectURL(file.raw);
@@ -476,8 +475,7 @@ export default {
     HandleVideo(param){  
       this.formfileData.append("videopath", param.file) 
     },
-    HandleMainImg(param){ 
-      console.log(param.file) 
+    HandleMainImg(param){  
       this.formfileData.append("mainpic", param.file) 
     },
     handleRemove(file, fileList) { 
@@ -570,8 +568,7 @@ export default {
           tags += e +","
         })
       }
-
-      console.log(tags)
+ 
       this.formfileData.append("tags", tags)
 
  
@@ -596,9 +593,7 @@ export default {
       } else { 
         this.formfileData.append("recommend", 0) 
       }
-      for (var key of this.formfileData.entries()) {
-          console.log(key[0] + ', ' + key[1]);
-      } 
+    
       if(this.tableData.length > 0){
         this.formfileData.append("extras", JSON.stringify( this.tableData))
       } 
@@ -608,10 +603,8 @@ export default {
       let product = {};
       this.submitFileForm()
       this.getEditData()
-       
-      console.log(this.fileList);
-      for (var i = 0; i < this.fileList.length; i++) {
-        console.log(this.fileList[i].url);
+        
+      for (var i = 0; i < this.fileList.length; i++) { 
         if (i == 0) {
           // 
           product.turns = this.fileList[i].url.replace(this.baseImage, "");
@@ -661,7 +654,7 @@ export default {
       this.tableData = [];
     },
     getCategoryList() {
-      
+      console.log(this.producttype)
       getCategory({
         categorytype:this.producttype
       }).then(({ data }) => {
