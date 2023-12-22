@@ -65,6 +65,23 @@
           <div>{{ item.title }}</div>
           <div>{{ item.address }}</div>
         </div>
+        <div class="coupon" v-if="item.coupon">
+         
+          <div class="line2"> 
+            <div class="left">
+              <div class="name">{{item.coupon.name}}</div> 
+              <div class="coupontypetxt" >{{ item.coupon.coupontype|coupontypetxt }}</div> 
+              <div class="discount"  v-if="item.coupon.coupontype==0">{{ item.coupon.discount}}折 </div>
+              <div class="discount" v-if="item.coupon.coupontype==1">满{{ item.coupon.top_money}}元 减{{ item.coupon.reduce_money}}元</div>
+
+            </div> 
+            <i class="el-icon-close" @click="deleteCoupon(item)"></i>
+          </div>
+          <div class="line1">
+            <div class="name">{{item.coupon.rules}}</div>
+            <div  >有效期: {{item.coupon.start |dateFormat}}- {{item.coupon.end|dateFormat}}</div> 
+          </div>  
+        </div>
         <Calendar :productuuid="item.uuid"></Calendar>
         <div class="actions">
           <el-tooltip effect="dark" content="图片库" placement="top">
@@ -81,6 +98,14 @@
               icon="el-icon-tickets"
               type="primary"
               @click="targetDetail(item.uuid)"
+            />
+          </el-tooltip>
+          <el-tooltip effect="dark" content="优惠券管理" placement="top">
+            <el-link
+              :underline="false"
+              icon="el-icon-s-ticket"
+              type="warning"
+              @click="manageCoupon(item)"
             />
           </el-tooltip>
           <el-tooltip effect="dark" content="修改" placement="top">
@@ -147,13 +172,17 @@
         ></el-button>
       </el-button-group>
     </div>
+    <el-dialog class="dialog" width="700px"  lock-scroll center :visible.sync="dialogCoupon">
+      <Coupons @close="close" :title="currentitem.title" @selectConpon="selectConpon"></Coupons>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { viewProducts, viewProductsClass, deleteProduct } from "@/api/product";
+import { viewProducts, viewProductsClass,updateProduct, deleteProduct } from "@/api/product";
 import { getCategory } from "@/api/category";
 import Calendar from "@/components/Calendar";
+import Coupons from "./components/coupons";
 export default {
   data() {
     return {
@@ -161,6 +190,7 @@ export default {
       homestayList: [],
       giftsClassList: [],
       dialogShow2: false,
+      dialogCoupon:false,
       paginationsize: 4,
       SRC: "",
       total: 0,
@@ -170,11 +200,13 @@ export default {
       },
       categories: [],
       currentPage: 1,  
-      loadMore:true
+      loadMore:true,
+      currentitem:{}
     };
   },
   components: {
     Calendar,
+    Coupons
   },
   filters: {
     booktype(isbook) {
@@ -184,8 +216,56 @@ export default {
         return "预售";
       }
     },
-  },
+    coupontypetxt(status){
+      if (status == 0)
+      {
+        return "折扣券"
+      }
+      else if (status == 1)
+      {
+        return "满减券"
+      } 
+    },
+  }, 
   methods: {
+    close() { 
+      this.dialogCoupon = false; 
+    },
+    selectConpon(couponuuid){ 
+      this.dialogCoupon = false;  
+      let data = {
+          method:"put",
+          uuid: this.currentitem.uuid,
+          couponuuid:couponuuid
+      }
+      updateProduct(data).then(({data:{msg, status}})=>{
+        console.log(msg)
+        this.getviewProducts()
+      })
+    },
+    deleteCoupon(item){
+      let _this = this
+      this.$confirm("移除优惠券?", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        let data = {
+            method:"put",
+            uuid: item.uuid,
+            removecouponuuid:item.coupon.uuid
+        }
+        updateProduct(data).then(({data:{msg, status}})=>{
+          console.log(msg)
+          _this.getviewProducts()
+        })
+      });
+      
+    },
+    manageCoupon(item){ 
+      this.currentitem = item
+      this.dialogCoupon = true
+    },
     nextpage() {
       if (this.loadMore ){
         this.currentPage += 1;
@@ -478,4 +558,27 @@ p {
   text-align: center;
   margin-top: 10px;
 }
+.coupon{
+  background-color: #d81e06;
+  color:white;
+  padding:5px;
+  border-radius: 5px;;
+}
+.line1{
+    display: flex;;
+    .name{
+      margin-right:10px;
+    }
+  }
+  .el-icon-close{
+     cursor: pointer;
+  }
+  .left{
+    display: flex; 
+  }
+  .line2
+  {
+    display: flex;
+    justify-content: space-between;
+  }
 </style>

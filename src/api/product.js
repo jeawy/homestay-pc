@@ -40,6 +40,11 @@ export function uploadAttachment(data) {
       }
     } )
   }
+
+  export function updateProduct(data) {
+    return AXIOS.post('/product/product/', data)
+  }
+
   //删除商品
 export function deleteProduct(data) {
   return AXIOS.post('/product/product/?delete', data)

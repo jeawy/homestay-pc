@@ -107,6 +107,21 @@
       <el-table-column prop="status"  label="规格" >
         <template slot-scope="{ row }"> 
           <div class="name-wrap">  
+            <div class="coupon" v-if="row.coupon"> 
+              <div class="line2"> 
+                <div class="left">
+                  <div class="name">{{row.coupon.name}}</div> 
+                  <div class="coupontypetxt" >{{ row.coupon.coupontype|coupontypetxt }}</div> 
+                  <div class="discount"  v-if="row.coupon.coupontype==0">{{ row.coupon.discount}}折 </div>
+                  <div class="discount" v-if="row.coupon.coupontype==1">满{{ row.coupon.top_money}}元 减{{ row.coupon.reduce_money}}元</div>
+                </div> 
+                <i class="el-icon-close" @click="deleteCoupon(row)"></i>
+              </div>
+              <div class="line1">
+                <div class="name">{{row.coupon.rules}}</div>
+                <div  >有效期: {{row.coupon.start |dateFormat}}- {{row.coupon.end|dateFormat}}</div> 
+              </div>  
+            </div>
             <el-table 
               :data="row.specifications"
               border>
@@ -115,19 +130,28 @@
               <el-table-column prop="number"  label="库存" />
               <el-table-column prop="coin"  label="积分" />
             </el-table>
-          </div>
-          </template>
+          </div> 
+        </template>
       </el-table-column>
 
       
       <el-table-column width="180" align="center" label="操作">
         <template slot-scope="{ row }">
+     
           <el-tooltip effect="dark" content="详情" placement="top">
             <el-link
               :underline="false"
               icon="el-icon-tickets"
               type="primary"
               @click="targetDetail(row.uuid)"
+            />
+          </el-tooltip>
+          <el-tooltip effect="dark" content="优惠券管理" placement="top">
+            <el-link
+              :underline="false"
+              icon="el-icon-s-ticket"
+              type="warning"
+              @click="manageCoupon(row)"
             />
           </el-tooltip>
           <el-tooltip effect="dark" content="图片库" placement="top">
@@ -195,16 +219,20 @@
           :total="total"
         >
     </el-pagination>
-    
+    <el-dialog class="dialog" width="700px"  lock-scroll center :visible.sync="dialogCoupon">
+      <Coupons @close="close" :title="currentitem.title" @selectConpon="selectConpon"></Coupons>
+    </el-dialog>
   </div> 
 </template>
 
 <script>
 import {
   viewProducts,  
-  deleteProduct
+  deleteProduct,
+  updateProduct
 } from "@/api/product"; 
 import {  getCategory } from "@/api/category";
+import Coupons from "./components/coupons";
 export default {
   data() {
     return {
@@ -223,8 +251,12 @@ export default {
       currentPage: 1,
        pageSize: 20,
        pageSizeList: [10, 20, 50, 100],
-       
+       dialogCoupon:false,
+       currentitem:{}
     };
+  },
+  components: { 
+    Coupons
   },
   filters:{
     booktype(isbook){
@@ -234,9 +266,57 @@ export default {
       else{
         return "预售"
       }
-    }
+    },
+    coupontypetxt(status){
+      if (status == 0)
+      {
+        return "折扣券"
+      }
+      else if (status == 1)
+      {
+        return "满减券"
+      } 
+    },
   },
   methods: {
+    close() { 
+      this.dialogCoupon = false; 
+    },
+    selectConpon(couponuuid){ 
+      this.dialogCoupon = false;  
+      let data = {
+          method:"put",
+          uuid: this.currentitem.uuid,
+          couponuuid:couponuuid
+      }
+      updateProduct(data).then(({data:{msg, status}})=>{
+        console.log(msg)
+        this.getviewProducts()
+      })
+    },
+    deleteCoupon(item){
+      let _this = this
+      this.$confirm("移除优惠券?", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        let data = {
+            method:"put",
+            uuid: item.uuid,
+            removecouponuuid:item.coupon.uuid
+        }
+        updateProduct(data).then(({data:{msg, status}})=>{
+          console.log(msg)
+          _this.getviewProducts()
+        })
+      });
+      
+    },
+    manageCoupon(item){ 
+      this.currentitem = item
+      this.dialogCoupon = true
+    },
     modifypic(item){ 
       this.$router.push({
           name: "add-room-pic",
@@ -501,4 +581,44 @@ p {
   top: 15px;
   z-index: 3;
 }
+.coupon{
+  width:100%;
+  border-radius: 5px; 
+  justify-content: space-between;
+  background-color: #d81e06;
+  color:white; 
+  padding-left:5px;
+  padding-right: 5px;
+}
+.el-icon-close{
+  margin-top:3px;
+  cursor: pointer;
+}
+.coupon{
+  background-color: #d81e06;
+  color:white;
+  padding:5px;
+  border-radius: 5px;;
+}
+.line1{
+    display: flex;;
+    .name{
+      margin-right:10px;
+    }
+  }
+  .el-icon-close{
+     cursor: pointer;
+  }
+  .left{
+    display: flex; 
+  }
+  .line2
+  {
+    display: flex;
+    justify-content: space-between;
+  }
+  .coupontypetxt{
+    padding-left:5px;
+    padding-right: 5px;
+  }
 </style>
