@@ -233,7 +233,7 @@ export default {
         name: "add-room",
       });
     },
-    modify(uuid, pic=false) {
+    modify(uuid,  pic=false) {
       if (pic){
         this.$router.push({
           name: "add-room-pic",
@@ -247,6 +247,7 @@ export default {
           name: "add-room",
           query: {
             uuid: uuid,
+            producttype:0
           },
         }); 
       } 

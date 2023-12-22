@@ -216,7 +216,7 @@ export default {
       total:100,
       queryForm:{
         selling:"1",
-        producttype:1,
+        producttypes:'1,10',
       },
       options:[],
       categories:[],
@@ -237,20 +237,19 @@ export default {
     }
   },
   methods: {
-    modifypic(item){
-      console.log(item)
+    modifypic(item){ 
       this.$router.push({
           name: "add-room-pic",
           query: {
             uuid: item.uuid,
-            producttype:1
+            producttypes:'1, 10'
           },
         });
     },
     resetParams(){
       this.queryForm={
         selling:"1",
-        producttype:1, // 只查询民宿以外产品
+        producttypes:'1,10', // 只查询民宿以外产品
       }
       this.currentPage = 1
       this.handleQueryList()

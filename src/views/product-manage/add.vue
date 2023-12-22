@@ -205,7 +205,7 @@
       <div class="btn">
         <el-button @click="cancel">取消</el-button>
         <el-button type="primary" @click="submitForm">{{uuid?'修改':'发布'}}</el-button>
-        <el-button type="primary" @click="nextStep">测试</el-button>
+      
       </div>
     </el-form>
   </div>
@@ -343,10 +343,7 @@ export default {
       console.log(param.file) 
       this.formfileData.append("mainpic", param.file) 
     },
-    nextStep(){
-      //下一步
-      this.$refs.piclist.submit()
-    },
+   
     getTags(){
       let label = "product"
       if (this.producttype==1){
