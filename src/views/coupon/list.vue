@@ -41,7 +41,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="归属" align="center" width="80">
+      <el-table-column label="类别" align="center" width="80">
         <template slot-scope="scope">
           <div slot="placeholder" class="image-slot">
             <span class="dot">{{ scope.row.coupontype | coupontypetxt }}</span>
@@ -63,6 +63,13 @@
           <div slot="placeholder" class="image-slot">
             <span class="dot">{{ scope.row.rules}}</span>
           </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="使用范围" align="center" >
+        <template slot-scope="scope">
+          <span slot="placeholder" class="image-slot" v-for="(item, index ) in scope.row.categories" :key="index">
+             {{ item.name }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="有效期" align="center" >
@@ -112,6 +119,14 @@
         label-width="100px"
         label-position="left"
       >
+        <el-form-item label="使用范围" prop="name">
+          <el-cascader v-model="actForm.category" placeholder="请选择商品类别" 
+                
+              :options ="options"
+              :props="{ checkStrictly: true, multiple: true }"
+              > 
+            </el-cascader> 
+        </el-form-item>
         <el-form-item label="优惠券标题" prop="name">
           <el-input
             v-model="actForm.name"
@@ -130,7 +145,7 @@
           </el-switch>
         </el-form-item>
 
-        <el-form-item label="分类归属" prop="coupontype">
+        <el-form-item label="类别" prop="coupontype">
           <el-radio v-model="actForm.coupontype" class="cardtype" :label="1"
             >满减券</el-radio
           >
@@ -138,6 +153,7 @@
             >折扣券</el-radio
           >
         </el-form-item>
+        
         <el-form-item label="优惠力度" prop="coupontype"  v-if="actForm.coupontype ==1">
            <div class="detail">
             <div class="txt">满</div>
@@ -176,13 +192,14 @@
   </div>
 </template>
 <script>
-import { getCouponApi, updateCoupon } from "@/api/coupon";
-import { getToken } from "@/utils/auth";
+import { getCouponApi, updateCoupon } from "@/api/coupon"; 
+import {  getCategory } from "@/api/category";
 export default {
   data() {
     return {
       communityuuid: "",
       coupons: [],
+      options:[],
       auth: false,
       baseurl: this.$store.state.BASE_URL_IMAGE + "/",
       multipleSelection: [],
@@ -216,6 +233,46 @@ export default {
     };
   },
   methods: {
+    getCategoryList(){
+      //获取商品的类别
+      let categorytypes = "10" 
+      
+      getCategory({pc:"", categorytypes:categorytypes}).then(({data})=>{ 
+         if(data.status == 0){
+          console.log(data)
+           this.categoriesList = data.msg
+           let children = []
+           for(var i = 0; i < data.msg.length;i ++){
+             children = []
+             if (data.msg[i].sub.length > 0){
+               for(var j = 0; j < data.msg[i].sub.length;j ++){
+                 children.push({
+                   value: data.msg[i].sub[j].id,
+                   label: data.msg[i].sub[j].name,
+                 })
+               }
+             }
+             this.options.push(
+               {
+                 value: data.msg[i].id,
+                 label: data.msg[i].name,
+                 children:children
+               }
+             )
+           }
+         }
+         else{
+           this.$notify(
+             {
+               type:"error",
+               title:"获取商品类别失败",
+               message:data.msg,
+               duration:0 
+             }
+           )
+         }
+      })
+    },
     //  显隐切换
     onVisibleChange(visible, row, idx) {
       this.coupons.splice(idx, 1, { ...row, disabled: true });
@@ -235,6 +292,7 @@ export default {
     //  单条数据编辑
     onEdit(row) {
       this.actForm = { ...row, method: "put" };
+    
       console.log(new Date(row.start), new Date(row.end))
       this.actForm.daterange = [new Date(row.start * 1000), new Date(row.end* 1000)]
       this.dialogName = "编辑"; 
@@ -327,7 +385,13 @@ export default {
       let data = {
         ...this.actForm,
         time:time
-      }
+      } 
+      data.categoryids  = ""
+      console.log(this.actForm.category)
+      this.actForm.category.forEach((item)=>{ 
+        console.log(item)
+        data.categoryids += item[item.length - 1] +","
+      }) 
       updateCoupon(data).then(({ data }) => {
         if (data.status == 0) {
           this.$message.success(data.msg);
@@ -368,6 +432,7 @@ export default {
   },
   created() {
     this.getCategories();
+    this.getCategoryList()
   }
 }
 </script>
