@@ -538,7 +538,8 @@ export default {
       // 数据格式化
       this.formfileData.append("producttype", this.producttype)
       this.formfileData.append("title", this.addProductsForm.title)
-      this.formfileData.append("content", this.addProductsForm.content) 
+      let content = this.addProductsForm.content.replace(/(alt=.*\/>)/g, 'width="100%" />')
+      this.formfileData.append("content", content) 
 
       this.formfileData.append("workday_price", this.addProductsForm.workday_price)
       this.formfileData.append("weekday_price", this.addProductsForm.weekday_price) 

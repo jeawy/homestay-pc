@@ -432,7 +432,8 @@ export default {
       this.formfileData.append("producttype", this.producttype)//民宿以外的商品
       this.formfileData.append("specifications", JSON.stringify( this.tableData))
       this.formfileData.append("title", this.addProductsForm.title)
-      this.formfileData.append("content", this.addProductsForm.content) 
+      let content = this.addProductsForm.content.replace(/(alt=.*\/>)/g, 'width="100%" />')
+      this.formfileData.append("content", content) 
       this.formfileData.append("lighlight", this.addProductsForm.lighlight)
 
        
