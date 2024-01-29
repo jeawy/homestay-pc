@@ -27,7 +27,8 @@
           v-for="(dayitem, dayindex) in  days" :key="dayindex" @click="openDialog(dayitem)"  > 
               <div  class="daytxt"   >{{ dayitem.day |dateDayFormat  }}</div >   
               <div  class="holiday" v-if="dayitem.holiday" >{{ dayitem.holiday  }}</div >   
-              <div  class="holiday" v-if="dayitem.price" >￥{{ dayitem.price  }}</div > 
+              <div  class="holiday" v-if="dayitem.price" > {{dayitem.number==0?"已租":dayitem.price}}</div > 
+              
           </div> 
       </div> 
     </div>
