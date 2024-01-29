@@ -237,7 +237,7 @@ export default {
       //获取商品的类别
       let categorytypes = "10" 
       
-      getCategory({pc:"", categorytypes:categorytypes}).then(({data})=>{ 
+      getCategory({pc:"" }).then(({data})=>{ 
          if(data.status == 0){
           console.log(data)
            this.categoriesList = data.msg
