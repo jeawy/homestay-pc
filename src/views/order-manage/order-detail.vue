@@ -67,11 +67,7 @@
                 <div>{{ responseData.express_number }}</div>
                 <div>{{ responseData.express_company }}</div>
               </div>
-              <div class="detail-item" v-for="(item, index) in orderTimeLine" :key="index">
-                
-               
-                <div> <div>{{ item.time }}</div>{{ item.status }}</div> 
-              </div> 
+              
             </div>
           </div>
         </div>
@@ -119,7 +115,7 @@ export default {
       billuuid: "",
       detailLoading: false,
       responseData: { spec: [] },
-      imageURL: process.env.VUE_APP_BASE_IMAGE + "/"
+      imageURL: process.env.VUE_APP_BASE_IMAGE + "/images/"
     };
   },
   filters: {
@@ -146,7 +142,7 @@ export default {
   },
   methods: {
     getDelivery(){
-				getBills({ billuuid: this.billuuid, delivery:1}).then(({data})=>{
+				getBills({ billuuid: this.billuuid }).then(({data})=>{
 					 
 					if(data.status ==0){
 						this.orderTimeLine = data.msg;
@@ -198,6 +194,7 @@ export default {
         .then(({ data: { status, msg } }) => {
           if (status !== 0) return;
           this.responseData = msg;
+          console.log(this.responseData)
           this.getDelivery()
         })
         .finally(() => {

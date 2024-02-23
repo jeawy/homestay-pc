@@ -22,7 +22,10 @@ export function getBillCountApi(params) {
 export function getBills(params) {
   return AXIOS.get("/bills/bills/", { params });
 }
- 
+
+export function updateBills(data) {
+  return AXIOS.post("/bills/admin/", data);
+}
  
 //新增商品的购买方式
 export function addPurchaseWay(data) {
