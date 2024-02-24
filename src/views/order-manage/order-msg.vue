@@ -157,6 +157,31 @@
         </template>
       </el-table-column>
       <el-table-column
+        prop="express_number"
+        width="250" 
+        label="收货人信息"
+        v-if="queryForm.billtype == 10  "
+      >
+        <template slot-scope="{ row }">
+          <div class="name-wrap">
+            <div class="detail-address" v-if="row.delivery_way ==0">
+           
+              <div class="address__content">
+                {{ row.receiver }} {{ row.receiver_phone }}
+                <div class="address__text">
+                  {{ row.receiver_address }}
+                </div>
+              </div>
+            </div>
+             <div class="detail-address" v-else> 
+              <div class="address__content">
+                买家自提 
+              </div>
+            </div>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
         width="80"
         align="center"
         prop="money"
